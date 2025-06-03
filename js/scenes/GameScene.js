@@ -29,6 +29,7 @@ export class GameScene extends Phaser.Scene {
         this.game_state = ST_PLAYING;
 
         this.my_input = new MyInput(this);
+        this.drawPadArea();
         this.graphics = this.add.graphics();
 
         GameState.player = new Player(this);
@@ -100,5 +101,19 @@ export class GameScene extends Phaser.Scene {
         }
 
     } // End of update()
+
+    drawPadArea(){
+        if (this.scale.height > 600) {
+            const hiddenPadHeight = this.scale.height - 600;
+
+            this.add.rectangle(
+                this.scale.width / 2,
+                600 + hiddenPadHeight / 2,
+                this.scale.width,
+                hiddenPadHeight,
+                0x303030
+            ).setDepth(998);
+        }
+    }
 
 } // End of GameScene

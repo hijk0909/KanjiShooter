@@ -109,7 +109,7 @@ export class MyInput {
     draw(graphics){
         if (this.pointerDown){
             graphics.fillStyle(0xffffff, 0.5);
-            graphics.fillCircle(this.swipeStart.x, this.swipeStart.y, 10);
+            graphics.fillCircle(this.swipeStart.x, this.swipeStart.y, 10).setDepth(999);
         }
     }
 

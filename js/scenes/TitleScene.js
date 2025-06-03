@@ -52,7 +52,7 @@ export class TitleScene extends Phaser.Scene {
             // console.log(this.scene.manager.getScenes(true).map(s => s.scene.key));
             // this.sound.play('se_tap');
             this.scene.start('GameScene');
-    }
+        }
 
     update(time, delta){
         // 隠しキーボード操作
