@@ -43,8 +43,9 @@ export class Bullet {
         } else if ( this.type === GLOBALS.BULLET.TYPE.ENEMY){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'be');
             this.size = 30;
-            this.speed = 4 + GameState.player.enrgy / 50;
+            this.speed = 4 + GameState.player.energy / 50;
             this.aim(GameState.player.pos);
+            this.shoot_cooldown = Math.random() * 60;
         } else if ( this.type === GLOBALS.BULLET.TYPE.PARENT){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpar');
             this.size = 36;
@@ -55,27 +56,27 @@ export class Bullet {
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bill');
             this.size = 30;
             this.speed = 3;
-            this.aim(p.pos);
+            this.aim(GameState.player.pos);
             this.count = 180;
         } else if ( this.type === GLOBALS.BULLET.TYPE.VIRTUE){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bvirtue');
             this.size = 40;
             this.speed = 2;
-            this.aim(p.pos);
+            this.aim(GameState.player.pos);
             this.count = 120;
         } else if ( this.type === GLOBALS.BULLET.TYPE.CONFU){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bconfu');
             this.size = 50;
             this.speed = 3;
-            this.aim(p.pos);
+            this.aim(GameState.player.pos);
         }
 
         this.sprite.visible = false;
     }
 
     aim(pos){
-        const dx = pos.x - pos.x;
-        const dy = pos.y - pos.y;
+        const dx = pos.x - this.pos.x;
+        const dy = pos.y - this.pos.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
         if (dist > 0){
             this.dx = dx / dist;
@@ -84,6 +85,11 @@ export class Bullet {
             this.dx = 0;
             this.dy = 1;
         }
+    }
+
+    setVelocity(dx, dy){
+        this.dx = dx;
+        this.dy = dy;
     }
 
     set_op(op){
@@ -107,6 +113,7 @@ export class Bullet {
                     this.dy = dy;
                 }
         }
+        // console.log("NPC Bullet",this.type, this.pos, this.dx, this.dy);
 
         this.pos.x += this.dx * this.speed;
         this.pos.y += this.dy * this.speed;

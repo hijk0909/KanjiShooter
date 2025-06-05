@@ -80,10 +80,23 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('y90', 'assets/images/y90.png');
         this.load.image('y100', 'assets/images/y100.png');
         // UIボタン
-        this.load.image('btn_touch', 'assets/images/btn_touch.png');
-     
+        this.load.image('btn_tap', 'assets/images/btn_tap.png');
+        // 操作説明
+        this.load.image('op_key', 'assets/images/op_key.png');
+        this.load.image('op_gamepad', 'assets/images/op_gamepad.png');
+        this.load.image('op_touch', 'assets/images/op_touch.png');
+        // アイコン
+        this.load.image('icon_finger', 'assets/images/icon_finger.png');
+
         // 効果音
-        this.load.audio('expl', './assets/audio/se/se_expl.mp3');
+        this.load.audio('se_expl', './assets/audio/se/se_expl.mp3');
+        this.load.audio('se_expl2', './assets/audio/se/se_expl2.mp3');
+        this.load.audio('se_shot_attack', './assets/audio/se/se_shot_attack.mp3');
+        this.load.audio('se_shot_love', './assets/audio/se/se_shot_love.mp3');
+        this.load.audio('se_energyup', './assets/audio/se/se_energyup.mp3');
+        this.load.audio('se_bell', './assets/audio/se/se_bell.mp3');
+        // ジングル
+        this.load.audio('jingle_gameover', './assets/audio/se/jingle_gameover.mp3');
     }
 
     create() {

@@ -15,12 +15,12 @@ export class Player {
 
         this.size = 40;
         this.pos = new Phaser.Math.Vector2(0, 0);
-        this.speed = 3;
-        this.energy = 100;
+        this.speed = 1;
+        this.energy = 0;
         this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_L;
         this.shooting = false;
         this.cooldown = 0;
-        this.max_shot = 4;
+        this.max_shot = 1;
         this.collision = new Phaser.Geom.Rectangle(-this.size /2 , -this.size /2, this.size, this.size);  // 中心からの相対矩形
         this.alive = true;
 
@@ -83,6 +83,8 @@ export class Player {
                         blt.setType(GLOBALS.BULLET.TYPE.PLAYER_L, bltpos);
                         blt.set_op(1);
                         player_bullets.push(blt);
+                        this.add_energy(-0.5);
+                        this.scene.sound.play('se_shot_love');
                     }
                 } else {
                     let num = 0;
@@ -96,6 +98,8 @@ export class Player {
                         blt.setType(GLOBALS.BULLET.TYPE.PLAYER_A, bltpos);
                         blt.set_op(1);
                         player_bullets.push(blt);
+                        this.add_energy(-0.5);
+                        this.scene.sound.play('se_shot_attack');
                     }
                     // オプションからの発射
                     this.options.forEach((option, i) => {
@@ -133,11 +137,11 @@ export class Player {
     }
 
     add_energy(energy){
-        this.energy += energy
-        this.energy = min(100, this.energy)
-        this.energy = max(0, this.energy)
-        this.speed = 1 + 5 * (this.energy / 100)
-        this.max_shot = 1 + int(3 * (this.energy  / 100))
+        this.energy += energy;
+        this.energy = Math.min(100, this.energy);
+        this.energy = Math.max(0, this.energy);
+        this.speed = 1 + 5 * (this.energy / 100);
+        this.max_shot = 1 + Math.floor(3 * (this.energy  / 100));
     }
 
     destroy(){

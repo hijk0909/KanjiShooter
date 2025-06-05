@@ -8,6 +8,7 @@ import { Effect } from '../objects/Effect.js';
 export class Exec {
     constructor(scene) {
         this.scene = scene;
+        this.failed = false;
     }
 
     // ■ 自機の移動
@@ -48,8 +49,8 @@ export class Exec {
                         const eff = new Effect(this.scene);
                         eff.setType(GLOBALS.EFFECT.TYPE.EXPLOSION, npc.pos);
                         GameState.effects.push(eff);
-                        // [TODO] 点数加算 +100
-                        // [TODO] 効果音（爆発）
+                        GameState.score += 100;
+                        this.scene.sound.play('se_expl');
                         pb.destroy();
                         GameState.player_bullets.splice(i, 1);
                         npc.destroy();
@@ -57,17 +58,21 @@ export class Exec {
                         break;
                     // 自機・攻撃弾とボス敵（耐久力あり）
                     } else if (pb.type == GLOBALS.BULLET.TYPE.PLAYER_A &&
-                        (npc.type == GLOBALS.NPC.TYPE.BOSS)){
+                        npc.type == GLOBALS.NPC.TYPE.BOSS &&
+                        npc.state != GLOBALS.NPC.STATE.OUT){
                         pb.destroy();
                         GameState.player_bullets.splice(i,1);
                         if (npc.hit() <= 0){
                             npc.destroy();
                             GameState.npcs.splice(j,1);
-                            // [TODO] 爆発エフェクト
-                            // [TODO] 点数加算 +2000
-                            // [TODO] 効果音（爆発）
+                            // 爆発エフェクト
+                            const eff = new Effect(this.scene);
+                            eff.setType(GLOBALS.EFFECT.TYPE.EXPLOSION, npc.pos);
+                            GameState.effects.push(eff);
+                            GameState.score += 3000;
+                            this.scene.sound.play('se_expl2');
                         } else {
-                            // [TODO] 点数加算 +10
+                            GameState.score += 10;
                             // [TODO] 効果音（打ち込み）
                         }
                         break;
@@ -78,7 +83,7 @@ export class Exec {
                         GameState.player_bullets.splice(i,1);
                         npc.hit();
                         GameState.ending.add_friend();
-                        // [TODO] 点数加算 +80
+                        GameState.score += 80;
                         // [TODO] 効果音（友に愛を当てる）
                         // 友・励弾の発射
                         const blt = new Bullet(this.scene);
@@ -116,32 +121,38 @@ export class Exec {
                 continue;
             }
             const p = GameState.player;
-            if (MyMath.check_collision(p.pos, p.size / 2, npcblt.pos, npcblt.size / 2)){
-                if (npcblt.type == GLOBALS.BULLET.TYPE.ENEMY){
+            if (npcblt.type == GLOBALS.BULLET.TYPE.ENEMY){
+                // 敵弾との当たり判定は甘め（自機を小さくする）
+                if (MyMath.check_collision(p.pos, p.size / 6, npcblt.pos, npcblt.size / 2)){
                     // [TODO] 効果音（FAILED）
                     if (!GameState.debug){
                         // [TODO] BGMの停止
                         // [TODO] 当たった弾の保存（ここでは消さない）
                         // [TODO] game_over_count = 0
                         // [TODO] game_state = ST_FAILED（どう親シーンに渡そうか？）
+                        this.scene.sound.play('jingle_gameover');
+                        this.failed = true;
                     }
-                } else if (npcblt.type == GLOBALS.BULLET.TYPE.FRIEND){
+                }
+            } else if (MyMath.check_collision(p.pos, p.size / 3, npcblt.pos, npcblt.size / 2)){
+                if (npcblt.type == GLOBALS.BULLET.TYPE.FRIEND){
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
-                    // [TODO] エネルギー増加 +6
+                    GameState.player.add_energy(6);
+                    this.scene.sound.play('se_energyup');
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.PARENT){
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
-                    // [TODO] エネルギー増加 +1
+                    GameState.player.add_energy(1);
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.ILL){
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
-                    // [TODO] エネルギー減少 -10
+                    GameState.player.add_energy(-10);
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.VIRTUE){
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
-                    // [TODO] 得点 +300
-                    // [TODO] エネルギー増加 +3
+                    GameState.score += 300;
+                    GameState.player.add_energy(3);
                     // [TODO] 効果音（徳）
                 }
             }
@@ -174,7 +185,7 @@ export class Exec {
                     }
                     item.destroy();
                     GameState.items.splice(i,1);
-                    // [TODO] 効果音（結婚）
+                    this.scene.sound.play('se_bell');
                 // 夫との結婚
                 } else if (item.type == GLOBALS.ITEM.TYPE.HUSBAND &&
                         GameState.married == false){
@@ -188,7 +199,7 @@ export class Exec {
                     }
                     item.destroy();
                     GameState.items.splice(i,1);
-                    // [TODO] 効果音（結婚）
+                    this.scene.sound.play('se_bell');
                 // 子の取得
                 } else if (item.type == GLOBALS.ITEM.TYPE.CHILD){
                     p.add_option(GLOBALS.ITEM.TYPE.CHILD, item.pos, p.options.length + 2);
@@ -198,14 +209,14 @@ export class Exec {
                     // [TODO] 効果音
                 // 「強」の取得
                 } else if (item.type == GLOBALS.ITEM.TYPE.FORCE){
-                    // [TODO] エネルギー増加 +100
+                    GameState.player.add_energy(100);
                     // [TODO] 効果音
                     item.destroy();
                     GameState.items.splice(i,1);
                 // 「毒」の取得
                 } else if (item.type == GLOBALS.ITEM.TYPE.POISON){
-                    // [TODO] エネルギー減少 -100
-                    // [TODO] スコア加算 +10000
+                    GameState.player.add_energy(-100);
+                    GameState.score += 10000;
                     // [TODO] 効果音
                     item.destroy();
                     GameState.items.splice(i,1);

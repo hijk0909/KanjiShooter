@@ -13,9 +13,9 @@ export class TitleScene extends Phaser.Scene {
     create() {
         const cx = this.game.canvas.width / 2;
         const cy = this.game.canvas.height / 2;
-        this.add.text(cx, cy - 50, 'KANJI Shooter', { fontSize: '64px', fill: '#ffee00' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
+        this.add.text(cx, 50, 'KANJI Shooter', { fontSize: '64px', fill: '#ffee00' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 215, 'Copyright ©2025 Current Color Co. Ltd. All rights reserved.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
-        this.add.text(cx, cy + 240, 'Version 1.3 2025.6.2.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
+        this.add.text(cx, cy + 240, 'Version 1.3 2025.6.5.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
         this.keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -25,12 +25,17 @@ export class TitleScene extends Phaser.Scene {
         if (this.my_input.pad){this.show_pad();}
         this.my_input.registerNextAction(() => this.start_game());
 
-        const btn_play = this.add.image(cx, cy + 60, 'btn_touch')
+        const btn_play = this.add.image(cx, cy + 60, 'btn_tap')
         .setOrigin(0.5,0.5)
         .setInteractive()
         .on('pointerdown', () => {this.start_game();})
         .on('pointerover', () => {btn_play.setTint(0xcccccc);})
         .on('pointerout', () => {btn_play.clearTint();});
+
+        const opy=100;
+        this.add.image(150,opy,'op_key').setOrigin(0.5,0);
+        this.add.image(400,opy,'op_gamepad').setOrigin(0.5,0);
+        this.add.image(650,opy,'op_touch').setOrigin(0.5,0);
 
         GameState.reset();
     }

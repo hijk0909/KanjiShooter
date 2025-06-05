@@ -13,8 +13,8 @@ export const GLOBALS = {
     },
 
     POS: {
-        MAX : 8101,
-        UNIT : 770,
+        MAX : 10001,
+        UNIT : 960,
         GOAL : 400
     },
 

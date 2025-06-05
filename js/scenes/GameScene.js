@@ -14,7 +14,7 @@ import { Exec } from './game_exec.js';
 import { Spawn } from './game_spawn.js';
 
 const ST_PLAYING = 0;
-const ST_FAILED = 0;
+const ST_FAILED = 1;
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -29,6 +29,7 @@ export class GameScene extends Phaser.Scene {
         this.scene.launch('UIScene');
         this.ui = this.scene.get('UIScene');
         this.game_state = ST_PLAYING;
+        this.game_over_count = 0;
 
         this.my_input = new MyInput(this);
         this.exec = new Exec(this);
@@ -59,10 +60,6 @@ export class GameScene extends Phaser.Scene {
 
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
-        // GameState.player.add_option(GLOBALS.ITEM.TYPE.WIFE, new Phaser.Math.Vector2(10,10), 2);
-        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(200,50), 3);
-        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(300,200), 4);
-        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(600,400), 5);
     } // End of create()
 
     update(time, delta) {
@@ -71,6 +68,10 @@ export class GameScene extends Phaser.Scene {
         if (this.game_state === ST_PLAYING){
             // スクロール
             GameState.pos -= 1;
+            if ( GameState.pos <= 0){
+                this.scene.stop('UIScene');
+                this.scene.start('GameClearScene');
+            }
 
             // 背景の更新
             this.bg.update(GameState.pos);
@@ -101,8 +102,17 @@ export class GameScene extends Phaser.Scene {
             // 画面効果の実行
             this.exec.effect();
 
+            if (this.exec.failed){
+                this.game_state = ST_FAILED;
+                this.game_over_count = 0;
+            }
+
         } else if (this.game_state === ST_FAILED){
-            // [TODO]
+            this.game_over_count += 1;
+            if (this.game_over_count > 120){
+                this.scene.stop('UIScene');
+                this.scene.start('GameOverScene');
+            }
         }
 
         // 隠しキーボード操作
@@ -123,7 +133,13 @@ export class GameScene extends Phaser.Scene {
                 this.scale.width,
                 hiddenPadHeight,
                 0x303030
-            ).setDepth(998);
+            ).setDepth(997);
+
+
+            this.add.image(this.scale.width/2,600+hiddenPadHeight/2,'icon_finger')
+            .setDepth(998)
+            .setOrigin(0.5,0.5)
+            .setScale(0.2);
         }
     }
 
