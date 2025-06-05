@@ -1,6 +1,9 @@
 // InputUtils.js
 import { GameState } from '../GameState.js';
 
+const SWIPE_THRESHOLD = 50;
+const DOUBLE_TIME_THRESHOLD = 10;
+
 export class MyInput {
     constructor(scene) {
         this.scene = scene;
@@ -38,8 +41,6 @@ export class MyInput {
         scene.input.on('pointerup', this.onPointerUp, this);
 
         this.release_counter = 0;
-        this.double_threshold_time = 10;
-        this.double_threshold_dist = 50;
         this.toggle = 0;
 
         const canvas = scene.game.canvas;
@@ -102,13 +103,7 @@ export class MyInput {
         this.fire_t = true; // 発射開始
 
         if (this.swipeStart){
-            const dx = this.swipeStart.x - pointer.x;
-            const dy = this.swipeStart.y - pointer.y;
-            const dist = Math.sqrt(dx*dx + dy+dy);
-//            if (this.release_counter < this.double_threshold_time && dist < this.double_threshold_dist){
-//                this.toggle = this.toggle === 1 ? 0 : 1;
- //           }
-            if (this.release_counter < this.double_threshold_time){
+            if (this.release_counter < DOUBLE_TIME_THRESHOLD){
                 this.toggle = this.toggle === 1 ? 0 : 1;
             }
         }
@@ -120,7 +115,7 @@ export class MyInput {
         if (!this.pointerDown || !this.swipeStart) return;
         const dx = pointer.x - this.swipeStart.x;
         const dy = pointer.y - this.swipeStart.y;
-        if (dx*dx+dy*dy < 200){
+        if (Math.sqrt(dx*dx+dy*dy) < SWIPE_THRESHOLD){
             this.up4 = this.down4 = this.left4 = this.right4 = false;
         } else {
             const angle = Math.atan2(dy, dx) * 180 / Math.PI;
