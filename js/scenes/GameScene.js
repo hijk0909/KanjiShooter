@@ -10,8 +10,8 @@ import { Item } from '../objects/Item.js';
 import { NPC } from '../objects/NPC.js';
 import { Option } from '../objects/Option.js';
 import { Player } from '../objects/Player.js';
-import { Exec } from './_exec.js';
-import { Spawn } from './_spawn.js';
+import { Exec } from './game_exec.js';
+import { Spawn } from './game_spawn.js';
 
 const ST_PLAYING = 0;
 const ST_FAILED = 0;
