@@ -10,6 +10,8 @@ import { Item } from '../objects/Item.js';
 import { NPC } from '../objects/NPC.js';
 import { Option } from '../objects/Option.js';
 import { Player } from '../objects/Player.js';
+import { Exec } from './_exec.js';
+import { Spawn } from './_spawn.js';
 
 const ST_PLAYING = 0;
 const ST_FAILED = 0;
@@ -29,13 +31,17 @@ export class GameScene extends Phaser.Scene {
         this.game_state = ST_PLAYING;
 
         this.my_input = new MyInput(this);
+        this.exec = new Exec(this);
+        this.spawn = new Spawn(this);
         this.drawPadArea();
         this.graphics = this.add.graphics();
 
         GameState.player = new Player(this);
         GameState.pos = GLOBALS.POS.MAX;
+        // 臨終のデバッグ用スタート地点
+        // GameState.pos = GLOBALS.POS.GOAL + 10;
         GameState.married = false;
-        GameState.ending = new Ending();
+        GameState.ending = new Ending(this);
         GameState.score = 0;
         GameState.npcs = [];
         GameState.player_bullets = [];
@@ -53,50 +59,55 @@ export class GameScene extends Phaser.Scene {
 
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
-        GameState.player.add_option(GLOBALS.ITEM.TYPE.WIFE, new Phaser.Math.Vector2(10,10), 2);
-        GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(200,50), 3);
-        GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(300,200), 4);
-        GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(600,400), 5);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.WIFE, new Phaser.Math.Vector2(10,10), 2);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(200,50), 3);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(300,200), 4);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(600,400), 5);
     } // End of create()
 
     update(time, delta) {
         this.graphics.clear();
 
         if (this.game_state === ST_PLAYING){
+            // スクロール
             GameState.pos -= 1;
+
+            // 背景の更新
             this.bg.update(GameState.pos);
+            // 臨終の更新
+            GameState.ending.update(GameState.pos);
+
+            // NPCの生成（座標）
+            this.spawn.npc_pos(GameState.pos);
+            // NPCの生成（エリア）
+            this.spawn.npc_area(GameState.pos);
+            // アイテムの生成（座標）
+            this.spawn.item_pos(GameState.pos);
 
             // 入力状態の更新
             this.my_input.update();
             this.my_input.draw(this.graphics);
-            // プレイヤーの移動
-            let dx = 0;
-            let dy = 0;
-            if (this.my_input.up){dy = -1;}
-            if (this.my_input.down){dy = 1;}
-            if (this.my_input.left){dx = -1;}
-            if (this.my_input.right){dx = 1;}
-            GameState.player.move(dx,dy);
-            // プレイヤーの弾の発射
-            GameState.player.shoot(this.my_input.fire, GameState.player_bullets);
-            // プレイヤーの更新
-            GameState.player.update();
 
-            // プレイヤー弾
-            for (let i = GameState.player_bullets.length - 1; i >= 0; i--) {
-                const pb = GameState.player_bullets[i];
-                pb.update();
-                if (!pb.isAlive()) {
-                    pb.destroy();
-                    GameState.player_bullets.splice(i, 1);
-                }
-            }
+            // プレイヤーの実行
+            this.exec.player(this.my_input);
+            // プレイヤー弾の実行
+            this.exec.player_bullet();
+            // NPCの実行
+            this.exec.npc();
+            // NPC弾の実行
+            this.exec.npc_bullet();
+            // アイテムの実行
+            this.exec.item();
+            // 画面効果の実行
+            this.exec.effect();
+
         } else if (this.game_state === ST_FAILED){
-
+            // [TODO]
         }
 
         // 隠しキーボード操作
         if (Phaser.Input.Keyboard.JustDown(this.keyQ)){
+            this.scene.stop('UIScene');
             this.scene.start('TitleScene');
         }
 

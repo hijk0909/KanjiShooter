@@ -60,12 +60,12 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('if', 'assets/images/img_if.png');
         this.load.image('ip', 'assets/images/img_ip.png');
         // 臨終
-        this.load.image('nh', 'assets/images/img_nf.png');
-        this.load.image('nw', 'assets/images/img_nf.png');
-        this.load.image('nc', 'assets/images/img_nf.png');
-        this.load.image('ngc', 'assets/images/img_nf.png');  
-        this.load.image('nfa', 'assets/images/img_nf.png');
-        this.load.image('nma', 'assets/images/img_nf.png');
+        this.load.image('nh', 'assets/images/img_nh.png');
+        this.load.image('nw', 'assets/images/img_nw.png');
+        this.load.image('nc', 'assets/images/img_nc.png');
+        this.load.image('ngc', 'assets/images/img_ngc.png');  
+        this.load.image('nfa', 'assets/images/img_nfa.png');
+        this.load.image('nma', 'assets/images/img_nma.png');
         this.load.image('nf', 'assets/images/img_nf.png');
         // 歳
         this.load.image('y0', 'assets/images/y0.png');

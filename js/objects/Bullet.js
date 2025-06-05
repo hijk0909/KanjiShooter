@@ -1,7 +1,8 @@
 // Bullet.js
-import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
+import { GameState } from '../GameState.js';
 import { MyDraw } from '../utils/DrawUtils.js';
+import { MyMath } from '../utils/MathUtils.js';
 
 const ORIGINAL_SIZE = 64;
 
@@ -23,8 +24,65 @@ export class Bullet {
         this.alive = true;
         if ( this.type === GLOBALS.BULLET.TYPE.PLAYER_L){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpl');
+            this.size = 36;
+            this.speed = 9;
+            this.dx = 0;
+            this.dy = -1;
         } else if ( this.type === GLOBALS.BULLET.TYPE.PLAYER_A){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpa');
+            this.size = 36;
+            this.speed = 9;
+            this.dx = 0;
+            this.dy = -1;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.FRIEND){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bf');
+            this.size = 30;
+            this.speed = 6;
+            this.dx = 0;
+            this.dy = -1;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.ENEMY){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'be');
+            this.size = 30;
+            this.speed = 4 + GameState.player.enrgy / 50;
+            this.aim(GameState.player.pos);
+        } else if ( this.type === GLOBALS.BULLET.TYPE.PARENT){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpar');
+            this.size = 36;
+            this.speed = 8;
+            this.dx = 0;
+            this.dy = 1;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.ILL){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bill');
+            this.size = 30;
+            this.speed = 3;
+            this.aim(p.pos);
+            this.count = 180;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.VIRTUE){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bvirtue');
+            this.size = 40;
+            this.speed = 2;
+            this.aim(p.pos);
+            this.count = 120;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.CONFU){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bconfu');
+            this.size = 50;
+            this.speed = 3;
+            this.aim(p.pos);
+        }
+
+        this.sprite.visible = false;
+    }
+
+    aim(pos){
+        const dx = pos.x - pos.x;
+        const dy = pos.y - pos.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 0){
+            this.dx = dx / dist;
+            this.dy = dy / dist;
+        } else {
+            this.dx = 0;
+            this.dy = 1;
         }
     }
 
@@ -33,8 +91,26 @@ export class Bullet {
     }
 
     update() {
+        if (this.type === GLOBALS.BULLET.TYPE.FRIEND ||
+            this.type === GLOBALS.BULLET.TYPE.PARENT){
+                const {dx, dy} = MyMath.rotate_towards_target(
+                    this.pos, GameState.player.pos, this.dx, this.dy, 5);
+                this.dx = dx;
+                this.dy = dy;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.ILL ||
+                    this.type === GLOBALS.BULLET.TYPE.VIRTUE){
+                if (this.count > 0){
+                    this.count -= 1;
+                    const {dx,dy} = MyMath.rotate_towards_target(
+                    this.pos, GameState.player.pos, this.dx, this.dy, 1);
+                    this.dx = dx;
+                    this.dy = dy;
+                }
+        }
 
-        this.pos.y -= 10;
+        this.pos.x += this.dx * this.speed;
+        this.pos.y += this.dy * this.speed;
+        
         MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
 
         // 画面外に出たら削除対象

@@ -5,10 +5,6 @@ import { MyDraw } from '../utils/DrawUtils.js';
 export class BG {
     constructor(scene){
         this.scene = scene;
-        this.type = null;
-        this.pos = new Phaser.Math.Vector2(0, 0);
-        this.collision = new Phaser.Geom.Rectangle(-20, -20, 40, 40);  // 中心からの相対矩形
-        this.alive = true;
         this.graphics = this.scene.add.graphics(); 
         this.years = [];
         this.borders = [];
@@ -35,8 +31,8 @@ export class BG {
             const ev = this.scrollEvents[i];
             if (pos === ev.pos) {
                 const y = new Year(this.scene);
-                this.sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1);
-                y.setType(this.sprite,new Phaser.Math.Vector2(0,0));
+                const sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1);
+                y.setType(sprite,new Phaser.Math.Vector2(0,0));
                 this.years.push(y);
                 const b = new Border(this.graphics);
                 this.borders.push(b);

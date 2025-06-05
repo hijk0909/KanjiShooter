@@ -55,7 +55,8 @@ export const GLOBALS = {
             FRIEND : 3,
             PARENT : 4,
             ILL : 5,
-            VIRTUE : 6
+            VIRTUE : 6,
+            CONFU : 7
         },
     },
 

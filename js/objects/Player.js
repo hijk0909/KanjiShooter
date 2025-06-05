@@ -5,7 +5,7 @@ import { MyDraw } from '../utils/DrawUtils.js';
 import { Bullet } from '../objects/Bullet.js';
 import { Option } from '../objects/Option.js';
 
-const COOLDOWN_INTERVAL = 13;
+const COOLDOWN_INTERVAL = 11; //連射間隔
 const ORIGINAL_SIZE = 64;
 const TRACE_MAX = 100;
 
@@ -16,7 +16,7 @@ export class Player {
         this.size = 40;
         this.pos = new Phaser.Math.Vector2(0, 0);
         this.speed = 3;
-        this.energy = 0;
+        this.energy = 100;
         this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_L;
         this.shooting = false;
         this.cooldown = 0;
@@ -62,15 +62,12 @@ export class Player {
         }
     }
 
-    shoot(fire, player_bullets){
-        if (fire){
-            if (!this.shooting){
-                this.shooting=true;
-                if (this.bullet_type === GLOBALS.BULLET.TYPE.PLAYER_L){
-                    this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_A;
-                } else {
-                    this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_L;
-                }
+    shoot(player_bullets, fire_a, fire_b){
+        if (fire_a || fire_b){
+            if (fire_a){
+                this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_A;
+            } else if (fire_b){
+                this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_L;
             }
             // console.log("bullet_type", this.bullet_type, this.cooldown);
             if (this.cooldown === 0){
@@ -119,10 +116,7 @@ export class Player {
                 this.cooldown = COOLDOWN_INTERVAL;
             }
         } else {
-            if (this.shooting){
-                this.shooting=false;
-                this.cooldown = 0;
-            }
+            this.cooldown = 0;
         }
     }
 

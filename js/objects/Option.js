@@ -11,7 +11,8 @@ export class Option {
         this.scene = scene;
         this.type = null;
         this.pos = new Phaser.Math.Vector2(0, 0);
-        this.collision = new Phaser.Geom.Rectangle(-20, -20, 40, 40);  // 中心からの相対矩形
+        this.sprite = null;
+        this.collision = new Phaser.Geom.Rectangle(-20, -20, 40, 40);
         this.state = GLOBALS.OPTION.STATE.FLOAT;
         this.alive = true;
         this.op_num = 0;
@@ -44,6 +45,8 @@ export class Option {
             this.trace_pos = 10 + 8 * (op_num - 2);
             this.lifespan = 2800 + Math.floor(Math.random() * 200);
         }
+
+        this.sprite.visible = false;
     }
 
     update( pos ) {

@@ -20,7 +20,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     update(time, delta){
-        console.log("UI.update");
         this.score = GameState.score;
         this.scoreText.setText(`SCORE：${GameState.score}`);
     }

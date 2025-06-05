@@ -4,13 +4,13 @@ import { GameState } from '../GameState.js';
 export class MyInput {
     constructor(scene) {
         this.scene = scene;
-        this.up = this.down = this.left = this.right = false;
-        this.up1 = this.donw1 = this.left1 = this.right1 = false;
-        this.up2 = this.donw2 = this.left2 = this.right2 = false;
-        this.up3 = this.donw3 = this.left3 = this.right3 = false;
-        this.up4 = this.donw4 = this.left4 = this.right4 = false;
-        this.fire = false;
-        this.fire1 = this.fire3 = this.fire4 = false;
+        this.up = this.up1 = this.up2 = this.up3 = this.up4 = false;
+        this.down = this.down1 = this.down2 = this.down3 = this.down4 = false;
+        this.left = this.left1 = this.left2 = this.left3 = this.left4 = false;
+        this.right = this.right1 = this.right2 = this.right3 = this.right4 = false;
+        this.fire_a = this.fire_a1 = this.fire_a2 = this.fire_a4 = false;
+        this.fire_b = this.fire_b1 = this.fire_b2 = this.fire_b4 = false;
+
         this.cursors = scene.input.keyboard.createCursorKeys();
         this.pointerDown = false;
         this.swipeStart = null;
@@ -20,6 +20,7 @@ export class MyInput {
 
         // キーボード関連
         this.keyZ = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+        this.keyX = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
         // ゲームパッド関連
         if (this.scene.input.gamepad.total > 0) {
@@ -36,6 +37,11 @@ export class MyInput {
         scene.input.on('pointermove', this.onPointerMove, this);
         scene.input.on('pointerup', this.onPointerUp, this);
 
+        this.release_counter = 0;
+        this.double_threshold_time = 10;
+        this.double_threshold_dist = 50;
+        this.toggle = 0;
+
         const canvas = scene.game.canvas;
         canvas.addEventListener("mouseleave", () => this.resetDirection());
         canvas.addEventListener("touchcancel", () => this.resetDirection());
@@ -47,7 +53,8 @@ export class MyInput {
         this.down1 = this.cursors.down.isDown;
         this.left1 = this.cursors.left.isDown;
         this.right1 = this.cursors.right.isDown;
-        this.fire1 = this.keyZ.isDown;
+        this.fire_a1 = this.keyZ.isDown;
+        this.fire_b1 = this.keyX.isDown;
 
         // パッド（アナログ入力）
         if (this.pad) {
@@ -67,20 +74,45 @@ export class MyInput {
             this.down3 = this.pad.buttons[13].pressed;
             this.left3 = this.pad.buttons[14].pressed;
             this.right3 = this.pad.buttons[15].pressed;
-            this.fire3 = this.pad.buttons[0].pressed;
+            this.fire_a2 = this.pad.buttons[0].pressed;
+            this.fire_b2 = this.pad.buttons[1].pressed;
+        }
+
+        if (this.pointerDown){
+            if (this.toggle === 0){
+                this.fire_a4 = true;
+            } else {
+                this.fire_b4 = true;
+            }
+        } else {
+            this.release_counter += 1;
         }
 
         this.up = this.up1 || this.up2 || this.up3 || this.up4;
         this.down = this.down1 || this.down2 || this.down3 || this.down4;
         this.left = this.left1 || this.left2 || this.left3 || this.left4;
         this.right = this.right1 || this.right2 || this.right3 || this.right4;
-        this.fire = this.fire1 || this.fire3 || this.fire4;
+        this.fire_a = this.fire_a1 || this.fire_a2 || this.fire_a4;
+        this.fire_b = this.fire_b1 || this.fire_b2 || this.fire_b4;
     }
 
     onPointerDown(pointer) {
         // console.log("onPointerDown", pointer.x, pointer.y);
         this.pointerDown = true;
-        this.fire4 = true; // 発射開始
+        this.fire_t = true; // 発射開始
+
+        if (this.swipeStart){
+            const dx = this.swipeStart.x - pointer.x;
+            const dy = this.swipeStart.y - pointer.y;
+            const dist = Math.sqrt(dx*dx + dy+dy);
+//            if (this.release_counter < this.double_threshold_time && dist < this.double_threshold_dist){
+//                this.toggle = this.toggle === 1 ? 0 : 1;
+ //           }
+            if (this.release_counter < this.double_threshold_time){
+                this.toggle = this.toggle === 1 ? 0 : 1;
+            }
+        }
+
         this.swipeStart = { x: pointer.x, y: pointer.y };
     }
 
@@ -102,7 +134,7 @@ export class MyInput {
 
     onPointerUp(pointer) {
         this.pointerDown = false;
-        this.fire4 = false;
+        this.release_counter = 0;
         this.resetDirection();
     }
 
@@ -115,7 +147,7 @@ export class MyInput {
 
     resetDirection() {
         this.up4 = this.down4 = this.left4 = this.right4 = false;
-        this.fire = false;
+        this.fire_a4 = this.fire_b4 = false;
     }
 
     registerPadConnect(callback) {
