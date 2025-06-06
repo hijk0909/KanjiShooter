@@ -1,4 +1,5 @@
 // BG.js
+import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
 import { MyDraw } from '../utils/DrawUtils.js';
 
@@ -8,6 +9,7 @@ export class BG {
         this.graphics = this.scene.add.graphics(); 
         this.years = [];
         this.borders = [];
+        this.last_pos = GLOBALS.POS.MAX;
 
         this.scrollEvents = [
             { pos: GLOBALS.POS.GOAL + GLOBALS.POS.UNIT * 10, spriteKey: 'y0'  },
@@ -26,17 +28,21 @@ export class BG {
 
     update(pos) {
         this.graphics.clear();
+
         // 生成(SPAWN)
-        for (let i = 0; i < this.scrollEvents.length; i++) {
-            const ev = this.scrollEvents[i];
-            if (pos === ev.pos) {
-                const y = new Year(this.scene);
-                const sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1);
-                y.setType(sprite,new Phaser.Math.Vector2(0,0));
-                this.years.push(y);
-                const b = new Border(this.graphics);
-                this.borders.push(b);
+        if (pos < this.last_pos){
+            for (let i = 0; i < this.scrollEvents.length; i++) {
+                const ev = this.scrollEvents[i];
+                if (ev.pos >= pos && ev.pos < this.last_pos) {
+                    const y = new Year(this.scene);
+                    const sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1);
+                    y.setType(sprite,new Phaser.Math.Vector2(0,0));
+                    this.years.push(y);
+                    const b = new Border(this.graphics);
+                    this.borders.push(b);
+                }
             }
+            this.last_pos = pos;
         }
 
         // 更新
@@ -71,7 +77,7 @@ class Year {
         this.pos = pos;
     }
     update(){
-        this.pos.y += 1;
+        this.pos.y += 1 * GameState.ff;
         MyDraw.updateSprite(this.sprite, this.pos, 1);
         if (this.pos.y > GLOBALS.G_HEIGHT){
             this.alive = false;
@@ -96,7 +102,7 @@ class Border {
     }
 
     update(){
-        this.pos += 1;
+        this.pos += 1 * GameState.ff;
         this.graphics.lineStyle(2, 0xff0000, 0.5);
         MyDraw.drawLine(this.graphics, 0,this.pos, GLOBALS.G_WIDTH, this.pos);
         if (this.pos > GLOBALS.G_HEIGHT){

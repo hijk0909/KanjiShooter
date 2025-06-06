@@ -1,31 +1,33 @@
 // InputUtils.js
 import { GameState } from '../GameState.js';
 
-const SWIPE_THRESHOLD = 50;
-const DOUBLE_TIME_THRESHOLD = 10;
+const DOUBLE_TAP_TIME_THRESHOLD = 10;
 
 export class MyInput {
     constructor(scene) {
         this.scene = scene;
-        this.up = this.up1 = this.up2 = this.up3 = this.up4 = false;
-        this.down = this.down1 = this.down2 = this.down3 = this.down4 = false;
-        this.left = this.left1 = this.left2 = this.left3 = this.left4 = false;
-        this.right = this.right1 = this.right2 = this.right3 = this.right4 = false;
+        this.up = this.up1 = this.up2 = this.up3 = false;
+        this.down = this.down1 = this.down2 = this.down3 = false;
+        this.left = this.left1 = this.left2 = this.left3 = false;
+        this.right = this.right1 = this.right2 = this.right3 = false;
         this.fire_a = this.fire_a1 = this.fire_a2 = this.fire_a4 = false;
         this.fire_b = this.fire_b1 = this.fire_b2 = this.fire_b4 = false;
+        this.dx = 0;
+        this.dy = 0;
 
         this.cursors = scene.input.keyboard.createCursorKeys();
         this.pointerDown = false;
-        this.swipeStart = null;
+        this.current_pointer = null;
+        this.last_pointer = null;
         this.callback_pad = null;
         this.callback_next = null;
         this.pad = null;
 
-        // キーボード関連
+        // キーボード：キー登録
         this.keyZ = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
         this.keyX = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
-        // ゲームパッド関連
+        // ゲームパッド接続確認
         if (this.scene.input.gamepad.total > 0) {
             this.pad = this.scene.input.gamepad.getPad(0);
         } else {
@@ -41,11 +43,11 @@ export class MyInput {
         scene.input.on('pointerup', this.onPointerUp, this);
 
         this.release_counter = 0;
-        this.toggle = 0;
+        this.toggle = 1;
 
         const canvas = scene.game.canvas;
-        canvas.addEventListener("mouseleave", () => this.resetDirection());
-        canvas.addEventListener("touchcancel", () => this.resetDirection());
+        canvas.addEventListener("mouseleave", () => this.stopFire());
+        canvas.addEventListener("touchcancel", () => this.stopFire());
     }
 
     update() {
@@ -79,20 +81,32 @@ export class MyInput {
             this.fire_b2 = this.pad.buttons[1].pressed;
         }
 
+        // ポインタ入力（マウス、タッチパネル）
         if (this.pointerDown){
+            // ポインタが押されている
             if (this.toggle === 0){
                 this.fire_a4 = true;
             } else {
                 this.fire_b4 = true;
             }
         } else {
+            // ポインタが押されていない
             this.release_counter += 1;
         }
 
-        this.up = this.up1 || this.up2 || this.up3 || this.up4;
-        this.down = this.down1 || this.down2 || this.down3 || this.down4;
-        this.left = this.left1 || this.left2 || this.left3 || this.left4;
-        this.right = this.right1 || this.right2 || this.right3 || this.right4;
+        if (this.pointerDown && this.current_pointer && this.last_pointer){
+            this.dx = this.current_pointer.x - this.last_pointer.x;
+            this.dy = this.current_pointer.y - this.last_pointer.y;
+        } else {
+            this.dx = this.dy = 0;
+        }
+        this.last_pointer = this.current_pointer;
+
+        // 操作の結合
+        this.up = this.up1 || this.up2 || this.up3;
+        this.down = this.down1 || this.down2 || this.down3;
+        this.left = this.left1 || this.left2 || this.left3;
+        this.right = this.right1 || this.right2 || this.right3;
         this.fire_a = this.fire_a1 || this.fire_a2 || this.fire_a4;
         this.fire_b = this.fire_b1 || this.fire_b2 || this.fire_b4;
     }
@@ -102,46 +116,38 @@ export class MyInput {
         this.pointerDown = true;
         this.fire_t = true; // 発射開始
 
-        if (this.swipeStart){
-            if (this.release_counter < DOUBLE_TIME_THRESHOLD){
-                this.toggle = this.toggle === 1 ? 0 : 1;
-            }
+        if (this.release_counter < DOUBLE_TAP_TIME_THRESHOLD){
+            this.toggle = this.toggle === 1 ? 0 : 1;
         }
 
-        this.swipeStart = { x: pointer.x, y: pointer.y };
+        this.current_pointer = { x: pointer.x, y: pointer.y };
     }
 
     onPointerMove(pointer) {
-        if (!this.pointerDown || !this.swipeStart) return;
-        const dx = pointer.x - this.swipeStart.x;
-        const dy = pointer.y - this.swipeStart.y;
-        if (Math.sqrt(dx*dx+dy*dy) < SWIPE_THRESHOLD){
-            this.up4 = this.down4 = this.left4 = this.right4 = false;
-        } else {
-            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-            const diff = 75;
-            this.up4 = (angle > -90 - diff && angle < -90 + diff);
-            this.down4 = (angle > 90 - diff  && angle < 90 + diff);
-            this.left4 = (angle > 180 - diff || angle < -180 + diff);
-            this.right4 = (angle > -diff && angle < diff);
+        if (this.pointerDown){
+            this.current_pointer = { x: pointer.x, y: pointer.y};
         }
     }
 
     onPointerUp(pointer) {
         this.pointerDown = false;
         this.release_counter = 0;
-        this.resetDirection();
+        this.current_pointer = null;
+        this.stopFire();
     }
 
     draw(graphics){
-        if (this.pointerDown){
-            graphics.fillStyle(0xffffff, 0.5);
-            graphics.fillCircle(this.swipeStart.x, this.swipeStart.y, 10).setDepth(999);
+        if (this.pointerDown && this.current_pointer){
+            if ( this.toggle == 0){
+                graphics.fillStyle(0xff0000, 0.5);
+            } else {
+                graphics.fillStyle(0x00ffff, 0.5);
+            }
+            graphics.fillCircle(this.current_pointer.x, this.current_pointer.y, 10).setDepth(999);
         }
     }
 
-    resetDirection() {
-        this.up4 = this.down4 = this.left4 = this.right4 = false;
+    stopFire() {
         this.fire_a4 = this.fire_b4 = false;
     }
 

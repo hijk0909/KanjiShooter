@@ -82,44 +82,57 @@ export class Spawn {
         ];
 
         this.npc_area_spawns = [];
+
+        this.last_pos_item_pos = GLOBALS.POS.MAX;
+        this.last_pos_npc_pos = GLOBALS.POS.MAX;
+        this.last_pos_npc_area = GLOBALS.POS.MAX;
     }
 
     // アイテムの生成（座標）
     item_pos(pos){
-        for (let i = 0; i < this.item_gpos.length; i++) {
-            const itemgp = this.item_gpos[i];
-            if (pos === Math.floor(itemgp.gpos)) {
-                if (itemgp.type == GLOBALS.ITEM.TYPE.CHILD && !GameState.married){
-                    continue; // 結婚していない時は子供は生成しない
+        if (pos < this.last_pos_item_pos){
+            for (let i = 0; i < this.item_gpos.length; i++) {
+                const itemgp = this.item_gpos[i];
+                if (itemgp.gpos >= pos && itemgp.gpos < this.last_pos_item_pos) {
+                    if (itemgp.type == GLOBALS.ITEM.TYPE.CHILD && !GameState.married){
+                        continue; // 結婚していない時は子供は生成しない
+                    }
+                    const item = new Item(this.scene);
+                    item.setType(itemgp.type, new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0));
+                    GameState.items.push(item);
                 }
-                const item = new Item(this.scene);
-                item.setType(itemgp.type, new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0));
-                GameState.items.push(item);
             }
+            this.last_pos_item_pos = pos;
         }
     }
 
     // NPCの生成（座標）
     npc_pos(pos){
-        for (let i = 0; i < this.npc_gpos.length; i++) {
-            const npcgp = this.npc_gpos[i];
-            if (pos === Math.floor(npcgp.gpos)) {
-                const npc = new NPC(this.scene);
-                npc.setType(npcgp.type, npcgp.pos);
-                GameState.npcs.push(npc);
+        if (pos < this.last_pos_npc_pos){
+            for (let i = 0; i < this.npc_gpos.length; i++) {
+                const npcgp = this.npc_gpos[i];
+                if (npcgp.gpos >= pos && npcgp.gpos < this.last_pos_npc_pos) {
+                    const npc = new NPC(this.scene);
+                    npc.setType(npcgp.type, npcgp.pos);
+                    GameState.npcs.push(npc);
+                }
             }
+            this.last_pos_npc_pos = pos;
         }
     }
 
     // NPCの生成（エリア）
     npc_area(pos){
-        for (let i = 0; i < this.npc_garea.length; i++) {
-            const npcga = this.npc_garea[i];
-            if (pos === Math.floor(npcga.gpos)) {
-                const npcasp = new npc_area_spawn(this.scene);
-                npcasp.setType(npcga.type, npcga.area, npcga.interval);
-                this.npc_area_spawns.push(npcasp);
+        if (pos < this.last_pos_npc_area){
+            for (let i = 0; i < this.npc_garea.length; i++) {
+                const npcga = this.npc_garea[i];
+                if (npcga.gpos >= pos && npcga.gpos < this.last_pos_npc_area) {
+                    const npcasp = new npc_area_spawn(this.scene);
+                    npcasp.setType(npcga.type, npcga.area, npcga.interval);
+                    this.npc_area_spawns.push(npcasp);
+                }
             }
+            this.last_pos_npc_area = pos;
         }
         for (let i = this.npc_area_spawns.length - 1; i >= 0; i--) {
             const npcasp = this.npc_area_spawns[i];
@@ -147,11 +160,11 @@ class npc_area_spawn {
     }
 
     update(){
-        this.area -= 1;
+        this.area -= 1 * GameState.ff;
         if (this.area <= 0){
             return false;
         }
-        this.counter -= 1;
+        this.counter -= 1 * GameState.ff;
         if (this.counter <= 0){
             this.counter = this.interval;
             const npc = new NPC(this.scene);

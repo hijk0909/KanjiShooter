@@ -2,12 +2,14 @@
 import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
 import { MyDraw } from '../utils/DrawUtils.js';
+import { MyMath } from '../utils/MathUtils.js';
+
 import { Bullet } from '../objects/Bullet.js';
 import { Option } from '../objects/Option.js';
 
 const COOLDOWN_INTERVAL = 11; //連射間隔
+const SENSITIVITY = 1.5; //ドラッグ操作に対する自機移動の敏感性
 const ORIGINAL_SIZE = 64;
-const TRACE_MAX = 100;
 
 export class Player {
     constructor(scene){
@@ -25,13 +27,15 @@ export class Player {
         this.alive = true;
 
         this.options = [];
-        this.trace = [];
-        this.trace_idx = 0;
+        this.trace_buffer = null;
+
+        this.graphics = this.scene.add.graphics(); 
+        this.marker = new Marker(this.graphics);
     }
 
     setPos(pos){
         this.pos = pos.clone(); // Phaser.Math.Vector2
-        this.trace = Array.from({ length: TRACE_MAX }, () => new Phaser.Math.Vector2(pos.x, pos.y));
+        this.trace_buffer = new TraceBuffer(pos);
         this.alive = true;
         this.sprite = this.scene.add.sprite(pos.x, pos.y, 'p').setDepth(0);
     }
@@ -42,18 +46,45 @@ export class Player {
         this.options.push(opt);
     }
 
-    move(dx,dy){
-        // 自機の移動
-        this.pos.x = Math.max(this.size /2, Math.min(GLOBALS.G_WIDTH - this.size /2, this.pos.x + dx * this.speed));
-        this.pos.y = Math.max(this.size /2, Math.min(GLOBALS.G_HEIGHT - this.size /2, this.pos.y + dy * this.speed));
+    move(my_input){
+
+        let isMoving = false;
+
+        if (my_input.dx != 0 || my_input.dy != 0){
+            // マウス・タッチによる移動
+            // const threshold = this.speed * GameState.ff;
+            // console.log("threshold = ",this.speed * GameState.ff, my_input.dx, my_input.dy);
+            // const dx = Math.max(-threshold, Math.min(threshold, my_input.dx * SENSITIVITY));
+            // const dy = Math.max(-threshold, Math.min(threshold, my_input.dy * SENSITIVITY));
+            const dx = my_input.dx * SENSITIVITY;
+            const dy = my_input.dy * SENSITIVITY;
+            this.pos.x = Math.max(this.size /2, Math.min(GLOBALS.G_WIDTH - this.size /2,
+                this.pos.x + dx ));
+            this.pos.y = Math.max(this.size /2, Math.min(GLOBALS.G_HEIGHT - this.size /2, 
+                this.pos.y + dy ));
+            isMoving = true;
+        } else {
+            // 十字キーによる移動
+            let dx = 0;
+            let dy = 0;
+            if (my_input.up){dy = -1;}
+            if (my_input.down){dy = 1;}
+            if (my_input.left){dx = -1;}
+            if (my_input.right){dx = 1;}
+            this.pos.x = Math.max(this.size /2, Math.min(GLOBALS.G_WIDTH - this.size /2,
+                this.pos.x + dx * this.speed * GameState.ff));
+            this.pos.y = Math.max(this.size /2, Math.min(GLOBALS.G_HEIGHT - this.size /2, 
+                this.pos.y + dy * this.speed * GameState.ff));
+            if ( dx != 0 || dy != 0){ isMoving = true;}
+        }
+
         // 軌跡の記録
-        if ( dx != 0 || dy != 0){
-            this.trace[this.trace_idx] = this.pos.clone();
-            this.trace_idx = (this.trace_idx + 1) % TRACE_MAX;
+        if ( isMoving ){
+            this.trace_buffer.push(this.pos.x, this.pos.y, GameState.ff);
         }
         // オプションの制御（逆順）
         for ( let i = this.options.length - 1; i >= 0; i--){
-            const pos = this.trace[ ((this.trace_idx - this.options[i].trace_pos + TRACE_MAX) % TRACE_MAX) ];
+            const pos = this.trace_buffer.findPoint(this.options[i].trace_time_diff);
             this.options[i].update(pos);
             if (!this.options[i].isAlive()){
                 this.options[i].destroy();
@@ -126,14 +157,13 @@ export class Player {
 
     update() {
         // 連射間隔
-        this.cooldown = Math.max(0, this.cooldown - 1)
+        this.cooldown = Math.max(0, this.cooldown - 1 * GameState.ff);
         // スプライトの更新
-        // this.sprite.setPosition(this.pos.x, this.pos.y);
         MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
-    }
 
-    draw(graphics) {
-
+        this.graphics.clear();
+        // マーカーの描画
+        this.marker.update(this.pos);
     }
 
     add_energy(energy){
@@ -153,5 +183,66 @@ export class Player {
 
     isAlive() {
         return this.alive;
+    }
+}
+
+// マーカー
+class Marker {
+
+    constructor(graphics){
+        this.graphics = graphics;
+        this.counter = 0;
+        this.max_counter = 100;
+    }
+
+    update(pos){
+        this.counter += GameState.ff;
+        if (this.counter > this.max_counter){
+            this.counter = 0;
+        }
+
+        const p = new Phaser.Math.Vector3(pos.x,pos.y,0);
+        const res = MyMath.projectPoint(p, GameState.camera);
+        const { screenPosition : sp } = res;
+        const alpha = (this.max_counter - this.counter) / this.max_counter;
+        const radius = this.counter;
+
+        this.graphics.lineStyle(4, 0xffff88, alpha);
+        this.graphics.strokeCircle(sp.x, sp.y, radius);
+
+    }
+}
+
+// 軌跡の管理
+class TraceBuffer {
+
+    constructor(pos){
+        this.TRACE_MAX = 100;
+        this.trace = Array.from({ length: this.TRACE_MAX }, () => ({ x : pos.x, y : pos.y, dt : 1 }));
+        this.traceIdx = 0;  //次に書き込むスロット
+    }
+
+    push(x, y, dt){
+        this.trace[this.traceIdx] = { x, y, dt };
+        this.traceIdx = (this.traceIdx + 1) % this.TRACE_MAX;
+        // console.log("TraceBuffer.push",x,y,dt);
+    }
+
+    // t * (1/60)前の時間の軌跡の座標を取り出す
+    findPoint(t){
+        // console.log("findPoint start : ",t);
+        let sum = 0;
+        for ( let i = 0, idx = (this.traceIdx - 1 + this.TRACE_MAX) % this.TRACE_MAX;
+          i < this.TRACE_MAX;
+          i++, idx = (idx - 1 + this.TRACE_MAX) % this.TRACE_MAX) {
+            const { x, y, dt } = this.trace[idx];
+            sum += dt;
+            if (sum > t) {
+                // console.log("findPoint success - ", t, sum, i);
+                return new Phaser.Math.Vector2(x, y);
+            }
+        }
+        // console.log("findPoint failed - ", t, sum);
+        return GameState.player.pos;           
     }
 }

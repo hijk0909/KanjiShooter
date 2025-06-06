@@ -3,6 +3,7 @@ import { GLOBALS } from './GameConst.js';
 
 export const  GameState = {
     // グローバル変数
+    ff : 1.0,
     pos : GLOBALS.POS.MAX,
     married : false,
     ending : null,

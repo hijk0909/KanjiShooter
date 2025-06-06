@@ -60,30 +60,37 @@ export class GameScene extends Phaser.Scene {
 
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
+        // [DEBUG] 最初からオプション取得状態にする
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.WIFE, new Phaser.Math.Vector2(10,20), 2);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(100,30), 3);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(200,50), 4);
+        // GameState.player.add_option(GLOBALS.ITEM.TYPE.CHILD, new Phaser.Math.Vector2(300,80), 5);
     } // End of create()
 
     update(time, delta) {
         this.graphics.clear();
+        GameState.ff = delta * GLOBALS.G_FPS / 1000;
+        // console.log("GameState.delta", GameState.delta);
 
         if (this.game_state === ST_PLAYING){
             // スクロール
-            GameState.pos -= 1;
+            GameState.pos -= 1 * GameState.ff;
             if ( GameState.pos <= 0){
                 this.scene.stop('UIScene');
                 this.scene.start('GameClearScene');
             }
 
             // 背景の更新
-            this.bg.update(GameState.pos);
+            this.bg.update(Math.floor(GameState.pos));
             // 臨終の更新
-            GameState.ending.update(GameState.pos);
+            GameState.ending.update(Math.floor(GameState.pos));
 
             // NPCの生成（座標）
-            this.spawn.npc_pos(GameState.pos);
+            this.spawn.npc_pos(Math.floor(GameState.pos));
             // NPCの生成（エリア）
-            this.spawn.npc_area(GameState.pos);
+            this.spawn.npc_area(Math.floor(GameState.pos));
             // アイテムの生成（座標）
-            this.spawn.item_pos(GameState.pos);
+            this.spawn.item_pos(Math.floor(GameState.pos));
 
             // 入力状態の更新
             this.my_input.update();
@@ -108,7 +115,7 @@ export class GameScene extends Phaser.Scene {
             }
 
         } else if (this.game_state === ST_FAILED){
-            this.game_over_count += 1;
+            this.game_over_count += 1 * GameState.ff;
             if (this.game_over_count > 120){
                 this.scene.stop('UIScene');
                 this.scene.start('GameOverScene');

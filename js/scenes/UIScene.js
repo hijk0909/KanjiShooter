@@ -16,17 +16,19 @@ export class UIScene extends Phaser.Scene {
         this.ch = this.game.canvas.height;
         // console.log("scale,canvas height",this.scale.height, this.game.canvas.height);
 
-        this.scoreText = this.add.text(10, 30, 'SCORE：0', style2);
-        this.remainText = this.add.text(10, 60, 'REMAIN：0', style2);
+        this.scoreText = this.add.text(10, 30, 'SCORE: 0', style2);
+        this.remainText = this.add.text(10, 60, 'REMAIN: 0', style2);
         this.energyText = this.add.text(this.cw - 180, 30, 'ENERGY:', style2);
+        this.fpsText = this.add.text(this.cw-180, 60, 'PERF:', style2);
         this.uiGraphics = this.add.graphics(); 
     }
 
     update(time, delta){
         this.score = GameState.score;
-        this.scoreText.setText(`SCORE：${GameState.score}`);
-        this.remainText.setText(`REMAIN：${GameState.pos}`);
-        this.energyText.setText(`ENERGY：${Math.floor(GameState.player.energy)}`);
+        this.scoreText.setText(`SCORE: ${GameState.score}`);
+        this.remainText.setText(`REMAIN: ${Math.floor(GameState.pos)}`);
+        this.energyText.setText(`ENERGY: ${Math.floor(GameState.player.energy)}`);
+        this.fpsText.setText(`PERF: ${Math.floor(GameState.ff * 100)}`);
 
         this.uiGraphics.clear();
         const posEnergy = this.ch *( 1 - GameState.player.energy / 100);

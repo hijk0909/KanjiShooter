@@ -13,13 +13,8 @@ export class Exec {
 
     // ■ 自機の移動
     player(my_input){
-        let dx = 0;
-        let dy = 0;
-        if (my_input.up){dy = -1;}
-        if (my_input.down){dy = 1;}
-        if (my_input.left){dx = -1;}
-        if (my_input.right){dx = 1;}
-        GameState.player.move(dx,dy);
+        // プレイヤーの移動
+        GameState.player.move(my_input);
         // プレイヤーの弾の発射
         GameState.player.shoot(GameState.player_bullets, my_input.fire_a, my_input.fire_b);
         // プレイヤーの更新
@@ -91,6 +86,7 @@ export class Exec {
                         bltpos.y -= npc.size / 2;
                         blt.setType(GLOBALS.BULLET.TYPE.FRIEND, bltpos);
                         GameState.npc_bullets.push(blt);
+                        break;
                     }
                 }
             }

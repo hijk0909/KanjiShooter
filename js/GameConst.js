@@ -4,6 +4,7 @@ export const GLOBALS = {
     G_HEIGHT : 800,
     G_WINDOW_WIDTH : 800,
     G_WINDOW_HEIGHT : 600,
+    G_FPS : 60,
 
     COLOR: {
         BLACK : 0x000000,
@@ -13,7 +14,7 @@ export const GLOBALS = {
     },
 
     POS: {
-        MAX : 10001,
+        MAX : 10010,
         UNIT : 960,
         GOAL : 400
     },

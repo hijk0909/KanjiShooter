@@ -12,6 +12,7 @@ const INIT_XR = GLOBALS.G_WIDTH + 128;
 export class Ending {
     constructor(scene){
         this.scene = scene;
+        this.isSetup = false;
         
         this.sprite_partner = null;
         this.sprite_father = null;
@@ -28,7 +29,6 @@ export class Ending {
         this.pos_friends_right = [];
         this.pos_children = [];
         this.pos_grandchildren = [];
-
 
         this.num_child = 0;
         this.num_friend = 0;
@@ -72,19 +72,20 @@ export class Ending {
                 this.sprite_grandchildren.push(this.scene.add.sprite((i+1)*unit3, INIT_YD, 'ngc'));
                 this.pos_grandchildren.push(new Phaser.Math.Vector2((i+1)*unit3, INIT_YD));
             }
-        }        
+        }
+        this.isSetup = true;
     }
 
     update(pos) {
         // console.log("Ending update:",pos, GLOBALS.POS.GOAL);
         if ( pos > GLOBALS.POS.GOAL){
             return;
-        } else if (pos === GLOBALS.POS.GOAL){
+        } else if (!this.isSetup){
             this.setup();
         }
 
         this.count += 1;
-        const diff = Math.max(0, 380 - this.count * 0.8);
+        const diff = Math.max(0, 380 - this.count * 0.8) * GameState.ff;
 
         this.pos_father.y = 100 - diff;
         MyDraw.updateSprite(this.sprite_father, this.pos_father, 60 / ORIGINAL_SIZE);
@@ -117,10 +118,6 @@ export class Ending {
                 MyDraw.updateSprite(this.sprite_grandchildren[i], this.pos_grandchildren[i], 40 / ORIGINAL_SIZE);
             }
         }
-    }
-
-    draw(graphics) {
-
     }
 
     add_friend(){

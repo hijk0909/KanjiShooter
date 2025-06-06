@@ -28,12 +28,12 @@ export class NPC {
         if ( this.type == GLOBALS.NPC.TYPE.ENEMY){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'ce');
             this.x_center = this.pos.x;
-            this.dy = Math.random()*1 + 1;
+            this.dy = (Math.random()*1 + 1);
             this.cnt = 0;
             this.shot_cooldown = 0;
         } else if ( this.type == GLOBALS.NPC.TYPE.FRIEND){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cf');
-            this.dy = Math.random()*1 + 1;
+            this.dy = (Math.random()*1 + 1);
         } else if ( this.type == GLOBALS.NPC.TYPE.FATHER){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cfa');
             this.state = GLOBALS.NPC.STATE.IN;
@@ -46,13 +46,13 @@ export class NPC {
             this.lifespan = 900;
         } else if ( this.type == GLOBALS.NPC.TYPE.OLD){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cold');
-            this.dy = Math.random()*0.5 + 0.5;
+            this.dy = (Math.random()*0.5 + 0.5);
             this.shot_cooldown = 0;
         } else if ( this.type == GLOBALS.NPC.TYPE.BOSS){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cboss');
             this.size = 120;
             this.pos = new Phaser.Math.Vector2(GLOBALS.G_WIDTH/2, -60);
-            this.dy = 2;
+            this.dy = 2 ;
             this.lifespan = 1000;
             this.hp = 50;
             this.state = GLOBALS.NPC.STATE.IN;
@@ -70,11 +70,11 @@ export class NPC {
     update() {
         // 敵
         if ( this.type === GLOBALS.NPC.TYPE.ENEMY){
-            this.cnt = (this.cnt + 10 > 360) ? this.cnt + 10 - 360 : this.cnt + 10;
+            this.cnt = (this.cnt + 10 > 360) ? this.cnt + 10 * GameState.ff - 360 : this.cnt + 10 * GameState.ff;
             this.pos.x = this.x_center +  10 * Math.cos(MyMath.radians(this.cnt));
-            this.pos.y += this.dy;
+            this.pos.y += this.dy * GameState.ff;
             // 弾の発射判定
-            this.shot_cooldown -= 1;
+            this.shot_cooldown -= 1 * GameState.ff;
             if (this.shot_cooldown <= 0){
                 this.shot_cooldown = 120;
                 const blt = new Bullet(this.scene);
@@ -83,18 +83,18 @@ export class NPC {
             }
         // 友
         } else if ( this.type === GLOBALS.NPC.TYPE.FRIEND){
-              this.pos.y += this.dy;
+              this.pos.y += this.dy * GameState.ff;
         // 父・母
         } else if ( this.type === GLOBALS.NPC.TYPE.FATHER ||
                     this.type === GLOBALS.NPC.TYPE.MOTHER){
             if (this.state === GLOBALS.NPC.STATE.IN){
-                this.pos.y += this.dy;
+                this.pos.y += this.dy * GameState.ff;
                 if (this.pos.y > GLOBALS.G_HEIGHT / 2){
                     this.state = GLOBALS.NPC.STATE.NORMAL;
                     this.shot_cooldown = 0;
                 }
             } else if (this.state === GLOBALS.NPC.STATE.NORMAL){
-                this.shot_cooldown -= 1;
+                this.shot_cooldown -= 1 * GameState.ff;
                 if (this.shot_cooldown <= 0){
                     this.shot_cooldown = 10;
                     const blt = new Bullet(this.scene);
@@ -103,19 +103,19 @@ export class NPC {
                     blt.setType(GLOBALS.BULLET.TYPE.PARENT, bltpos);
                     GameState.npc_bullets.push(blt);
                 }
-                this.lifespan -= 1;
+                this.lifespan -= 1 * GameState.ff;
                 if (this.lifespan <= 0){
                     this.state = GLOBALS.NPC.STATE.OUT;
                     this.dx = this.pos.x > GLOBALS.G_WIDTH / 2 ? 1 : -1;
                     this.sprite.setAlpha(0.5);
                 }
             } else if (this.state === GLOBALS.NPC.STATE.OUT){
-                this.pos.x += this.dx
+                this.pos.x += this.dx * GameState.ff;
             }
         // 老
         } else if ( this.type === GLOBALS.NPC.TYPE.OLD){
             // 弾の発射判定
-            this.shot_cooldown -= 1;
+            this.shot_cooldown -= 1 * GameState.ff;
             if (this.shot_cooldown <= 0){
                 this.shot_cooldown = 45;
                 if (Math.random() < 0.3){
@@ -128,8 +128,8 @@ export class NPC {
                     GameState.npc_bullets.push(blt);
                 }
             }
-            this.pos.x += this.dx;
-            this.pos.y += this.dy;
+            this.pos.x += this.dx * GameState.ff;
+            this.pos.y += this.dy * GameState.ff;
         // 悪（BOSS）
         } else if ( this.type === GLOBALS.NPC.TYPE.BOSS){
             if ( this.state == GLOBALS.NPC.STATE.IN){
@@ -158,8 +158,8 @@ export class NPC {
                 }
             } else if ( this.state == GLOBALS.NPC.STATE.OUT ){
             }
-            this.pos.x += this.dx;
-            this.pos.y += this.dy;
+            this.pos.x += this.dx * GameState.ff;
+            this.pos.y += this.dy * GameState.ff;
         // 災
         } else if ( this.type == GLOBALS.NPC.TYPE.DISASTER){
             if (this.pos.y > GLOBALS.G_HEIGHT / 2){
@@ -179,8 +179,8 @@ export class NPC {
                 }
                 this.alive = false;
             }
-            this.pos.x += this.dx;
-            this.pos.y += this.dy;
+            this.pos.x += this.dx * GameState.ff;
+            this.pos.y += this.dy * GameState.ff;
         }
 
         MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);

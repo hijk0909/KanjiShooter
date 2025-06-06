@@ -33,8 +33,8 @@ export class Effect {
 
     update() {
         if (this.type == GLOBALS.EFFECT.TYPE.EXPLOSION){
-            this.radius += 5;
-            this.size -= 1;
+            this.radius += 5 * GameState.ff;
+            this.size -= 1 * GameState.ff;
             if (this.size < 5){
                 this.alive =false;
             }

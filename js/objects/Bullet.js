@@ -100,7 +100,7 @@ export class Bullet {
         if (this.type === GLOBALS.BULLET.TYPE.FRIEND ||
             this.type === GLOBALS.BULLET.TYPE.PARENT){
                 const {dx, dy} = MyMath.rotate_towards_target(
-                    this.pos, GameState.player.pos, this.dx, this.dy, 5);
+                    this.pos, GameState.player.pos, this.dx, this.dy, 5 * GameState.ff);
                 this.dx = dx;
                 this.dy = dy;
         } else if ( this.type === GLOBALS.BULLET.TYPE.ILL ||
@@ -108,15 +108,15 @@ export class Bullet {
                 if (this.count > 0){
                     this.count -= 1;
                     const {dx,dy} = MyMath.rotate_towards_target(
-                    this.pos, GameState.player.pos, this.dx, this.dy, 1);
+                    this.pos, GameState.player.pos, this.dx, this.dy, 1 * GameState.ff);
                     this.dx = dx;
                     this.dy = dy;
                 }
         }
         // console.log("NPC Bullet",this.type, this.pos, this.dx, this.dy);
 
-        this.pos.x += this.dx * this.speed;
-        this.pos.y += this.dy * this.speed;
+        this.pos.x += this.dx * this.speed * GameState.ff;
+        this.pos.y += this.dy * this.speed * GameState.ff;
         
         MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
 

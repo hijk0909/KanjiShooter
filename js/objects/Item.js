@@ -44,8 +44,8 @@ export class Item {
     }
 
     update() {
-        this.pos.x += this.dx * this.speed;
-        this.pos.y += this.dy * this.speed;
+        this.pos.x += this.dx * this.speed * GameState.ff;
+        this.pos.y += this.dy * this.speed * GameState.ff;
 
         // console.log("Item Update()",this.pos, GameState.items.length);
         MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
