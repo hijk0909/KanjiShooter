@@ -1,4 +1,6 @@
 // KanjiShooter/AssetLoader.js
+import { GameState } from './js/GameState.js';
+
 export class AssetLoader extends Phaser.Scene {
     constructor() {
         super({ key: 'AssetLoaderScene' });
@@ -41,7 +43,10 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('cdevil', 'assets/images/img_cdevil.png');
         this.load.image('cdisaster', 'assets/images/img_cdisaster.png');
         this.load.image('cold', 'assets/images/img_cold.png');
+        this.load.image('ccustomer', 'assets/images/img_ccustomer.png');
         this.load.image('cwall', 'assets/images/img_cwall.png');
+        this.load.spritesheet('cwall_anim', 'assets/images/img_cwall_anim.png', {
+            frameWidth: 64,  frameHeight: 64, endFrame : 7 });
         // 弾
         this.load.image('be', 'assets/images/img_be.png');
         this.load.image('bf', 'assets/images/img_bf.png');
@@ -51,8 +56,11 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('bpar', 'assets/images/img_bpar.png');
         this.load.image('bvirtue', 'assets/images/img_bvirtue.png');
         this.load.image('bill', 'assets/images/img_bill.png');
+        this.load.image('bmoney', 'assets/images/img_bmoney.png');
         // エフェクト
         this.load.image('ex', 'assets/images/img_ex.png');
+        this.load.image('ebl', 'assets/images/img_ebl.png');
+        this.load.image('etime', 'assets/images/img_etime.png');
         // アイテム
         this.load.image('ic', 'assets/images/img_ic.png');
         this.load.image('ih', 'assets/images/img_ih.png');
@@ -89,18 +97,37 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('icon_finger', 'assets/images/icon_finger.png');
 
         // 効果音
-        this.load.audio('se_expl', './assets/audio/se/se_expl.mp3');
+        this.load.audio('se_tap', './assets/audio/se/se_tap.mp3');
+        this.load.audio('se_expl', './assets/audio/se/se_expl.mp3');       
         this.load.audio('se_expl2', './assets/audio/se/se_expl2.mp3');
         this.load.audio('se_shot_attack', './assets/audio/se/se_shot_attack.mp3');
         this.load.audio('se_shot_love', './assets/audio/se/se_shot_love.mp3');
-        this.load.audio('se_energyup', './assets/audio/se/se_energyup.mp3');
+        this.load.audio('se_earn', './assets/audio/se/se_earn.mp3');
+        this.load.audio('se_loss', './assets/audio/se/se_loss.mp3');
+        this.load.audio('se_hit', './assets/audio/se/se_hit.mp3');
         this.load.audio('se_bell', './assets/audio/se/se_bell.mp3');
         // ジングル
         this.load.audio('jingle_gameover', './assets/audio/se/jingle_gameover.mp3');
+        // BGM
+        this.load.audio('bgm_clear', './assets/audio/bgm/BGM_CLEAR.mp3');
+        this.load.audio('bgm_main', './assets/audio/bgm/BGM_MAIN.mp3');
     }
 
     create() {
-        // 次のシーン（タイトル画面）へ遷移
+        GameState.sound = {
+            se_tap          : this.sound.add('se_tap', { volume: 1.0 }),
+            se_expl         : this.sound.add('se_expl', { volume: 0.7 }),
+            se_expl2        : this.sound.add('se_expl', { volume: 1.0 }),
+            se_shot_attack  : this.sound.add('se_shot_attack', { volume: 0.4}),
+            se_shot_love    : this.sound.add('se_shot_love', { volume: 1.0}),
+            se_earn         : this.sound.add('se_earn', { volume: 0.3 }),
+            se_loss         : this.sound.add('se_loss', { volume: 1.0 }),
+            se_hit          : this.sound.add('se_hit', { volume: 1.0 }),
+            se_bell         : this.sound.add('se_bell', { volume: 1.0 }),
+            jingle_gameover : this.sound.add('jingle_gameover', { volume: 0.6 }),
+            bgm_clear       : this.sound.add('bgm_clear', { volume: 0.8, loop: true}),
+            bgm_main        : this.sound.add('bgm_main', { volume: 0.8, loop: true })
+        };
         this.scene.start('TitleScene');
     }
 }

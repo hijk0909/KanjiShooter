@@ -1,6 +1,7 @@
 // UIScene.js
 import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
+import { MyMath } from '../utils/MathUtils.js';
 
 const style1 = { font: '16px Arial', fill: '#ffffff' };
 const style2 = { font: '24px Arial', fill: '#ffffff', shadow: {offsetX : 2, offsetY: 2, color : '#eee', blur:0, fill: true, stroke: false }};
@@ -17,18 +18,16 @@ export class UIScene extends Phaser.Scene {
         // console.log("scale,canvas height",this.scale.height, this.game.canvas.height);
 
         this.scoreText = this.add.text(10, 30, 'SCORE: 0', style2);
-        this.remainText = this.add.text(10, 60, 'REMAIN: 0', style2);
+        this.remainText = this.add.text(10, 60, 'AGE: 0', style2);
         this.energyText = this.add.text(this.cw - 180, 30, 'ENERGY:', style2);
-        this.fpsText = this.add.text(this.cw-180, 60, 'PERF:', style2);
         this.uiGraphics = this.add.graphics(); 
     }
 
     update(time, delta){
         this.score = GameState.score;
         this.scoreText.setText(`SCORE: ${GameState.score}`);
-        this.remainText.setText(`REMAIN: ${Math.floor(GameState.pos)}`);
+        this.remainText.setText(`AGE: ${MyMath.age(GameState.pos)}`);
         this.energyText.setText(`ENERGY: ${Math.floor(GameState.player.energy)}`);
-        this.fpsText.setText(`PERF: ${Math.floor(GameState.ff * 100)}`);
 
         this.uiGraphics.clear();
         const posEnergy = this.ch *( 1 - GameState.player.energy / 100);

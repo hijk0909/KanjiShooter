@@ -10,6 +10,7 @@ export class BG {
         this.years = [];
         this.borders = [];
         this.last_pos = GLOBALS.POS.MAX;
+        this.bg_color = GLOBALS.COLOR.BG;
 
         this.scrollEvents = [
             { pos: GLOBALS.POS.GOAL + GLOBALS.POS.UNIT * 10, spriteKey: 'y0'  },
@@ -28,6 +29,8 @@ export class BG {
 
     update(pos) {
         this.graphics.clear();
+        this.graphics.fillStyle(this.bg_color,1);
+        this.graphics.fillRect(0, 0, this.scene.scale.width, this.scene.scale.height).setDepth(-999);
 
         // 生成(SPAWN)
         if (pos < this.last_pos){
@@ -62,6 +65,10 @@ export class BG {
                 this.borders.splice(i, 1);
             }
         }
+    }
+
+    set_color(color) {
+        this.bg_color = color;
     }
 }
 

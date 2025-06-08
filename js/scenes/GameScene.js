@@ -5,6 +5,7 @@ import { MyMath } from '../utils/MathUtils.js';
 import { BG } from '../objects/BG.js';
 import { Bullet } from '../objects/Bullet.js';
 import { Effect } from '../objects/Effect.js';
+import { Starting } from '../objects/Starting.js';
 import { Ending } from '../objects/Ending.js';
 import { Item } from '../objects/Item.js';
 import { NPC } from '../objects/NPC.js';
@@ -40,9 +41,11 @@ export class GameScene extends Phaser.Scene {
         GameState.player = new Player(this);
         GameState.pos = GLOBALS.POS.MAX;
         // 臨終のデバッグ用スタート地点
-        // GameState.pos = GLOBALS.POS.GOAL + 10;
+        // GameState.pos = GLOBALS.POS.GOAL + 500; // [DEBUG]
+        // GameState.debug = true; // [DEBUG]
         GameState.married = false;
         GameState.ending = new Ending(this);
+        GameState.bg = new BG(this);
         GameState.score = 0;
         GameState.npcs = [];
         GameState.player_bullets = [];
@@ -52,11 +55,13 @@ export class GameScene extends Phaser.Scene {
 
         GameState.player.setPos(new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT - 100));
         GameState.camera = {
-            position: new Phaser.Math.Vector3(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT, -450),
-            rotation: { upDown: -32, rightLeft: 0, roll: 0 }
+            position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, GLOBALS.CAMERA.Y, GLOBALS.CAMERA.Z),
+            rotation: { upDown: GLOBALS.CAMERA.UPDOWN, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
         };
 
-        this.bg = new BG(this);
+        this.starting = new Starting(this);
+        this.starting.setup();
+        GameState.sound.bgm_main.play();
 
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
@@ -76,12 +81,15 @@ export class GameScene extends Phaser.Scene {
             // スクロール
             GameState.pos -= 1 * GameState.ff;
             if ( GameState.pos <= 0){
+                GameState.sound.bgm_main.stop();
                 this.scene.stop('UIScene');
                 this.scene.start('GameClearScene');
             }
 
             // 背景の更新
-            this.bg.update(Math.floor(GameState.pos));
+            GameState.bg.update(Math.floor(GameState.pos));
+            // 誕生の更新
+            this.starting.update();
             // 臨終の更新
             GameState.ending.update(Math.floor(GameState.pos));
 
@@ -124,6 +132,7 @@ export class GameScene extends Phaser.Scene {
 
         // 隠しキーボード操作
         if (Phaser.Input.Keyboard.JustDown(this.keyQ)){
+            GameState.sound.bgm_main.stop();
             this.scene.stop('UIScene');
             this.scene.start('TitleScene');
         }

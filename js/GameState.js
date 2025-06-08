@@ -7,9 +7,11 @@ export const  GameState = {
     pos : GLOBALS.POS.MAX,
     married : false,
     ending : null,
+    bg : null,
     score : 0,
     camera : null,
     sound : null,
+    se: null,  //[DEBUG]
     debug : false,
 
     // 表示オブジェクト管理

@@ -30,6 +30,11 @@ export class MyMath {
         return {dx : new_dx, dy : new_dy};
     }
 
+    static target_angle(src, target, angle_diff){
+        const target_angle = Math.atan2(target.y - src.y, target.x - src.x);
+        return (target_angle + angle_diff + Math.PI) % ( 2 * Math.PI) - Math.PI;
+    }
+
     static projectPoint(point3D, camera) {
         const { x: x1, y: y1, z: z1 } = point3D;
         const { position, rotation } = camera;
@@ -76,5 +81,17 @@ export class MyMath {
             depth: depth,
             ratio: ratio
         };
+    }
+
+    static age(pos){
+        let age = 0;
+        // 年齢基準：スクリーン中央
+        let spos = pos + GLOBALS.G_HEIGHT / 2;
+        if (spos < GLOBALS.POS.GOAL){
+            age = 100;
+        } else {
+            age = Math.max(0, 100 - 10 * (spos - GLOBALS.POS.GOAL) / GLOBALS.POS.UNIT);
+        }
+        return Math.floor(age);
     }
 }

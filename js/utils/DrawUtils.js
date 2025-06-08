@@ -14,7 +14,21 @@ export class MyDraw {
             sprite.visible = true;
             sprite.setPosition(screenPosition.x, screenPosition.y);
             sprite.setScale(size * ratio);
-            sprite.setDepth(-depth);
+            sprite.setDepth(Math.max(-900,-depth));
+        } else {
+            sprite.visible = false;
+        }
+    }
+
+    static updateSprite3( sprite, point, size ){
+        const result = MyMath.projectPoint(point,GameState.camera);
+        if (result){
+            const { screenPosition, depth, ratio } = result;
+            // console.log(screenPosition.x, screenPosition.y, depth, ratio);
+            sprite.visible = true;
+            sprite.setPosition(screenPosition.x, screenPosition.y);
+            sprite.setScale(size * ratio);
+            sprite.setDepth(Math.max(-900,-depth));
         } else {
             sprite.visible = false;
         }
@@ -27,7 +41,7 @@ export class MyDraw {
         const res2 = MyMath.projectPoint(p2,GameState.camera);
         if (res1 && res2){
             const { screenPosition : sp1 } = res1;
-            const { screenPosition : sp2,} = res2;
+            const { screenPosition : sp2 } = res2;
             g.beginPath();
             g.moveTo(sp1.x, sp1.y);
             g.lineTo(sp2.x, sp2.y);

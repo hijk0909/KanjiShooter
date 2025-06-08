@@ -15,7 +15,7 @@ export class TitleScene extends Phaser.Scene {
         const cy = this.game.canvas.height / 2;
         this.add.text(cx, 50, 'KANJI Shooter', { fontSize: '64px', fill: '#ffee00' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 215, 'Copyright ©2025 Current Color Co. Ltd. All rights reserved.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
-        this.add.text(cx, cy + 240, 'Version 1.3 2025.6.5.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
+        this.add.text(cx, cy + 240, 'Version 1.3 2025.6.6.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
         this.keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -55,7 +55,7 @@ export class TitleScene extends Phaser.Scene {
             this.scene.stop('UI');
 
             // console.log(this.scene.manager.getScenes(true).map(s => s.scene.key));
-            // this.sound.play('se_tap');
+            GameState.sound.se_tap.play();
             this.scene.start('GameScene');
         }
 

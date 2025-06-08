@@ -2,6 +2,7 @@
 import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
 import { MyInput } from '../utils/InputUtils.js';
+import { MyMath } from '../utils/MathUtils.js';
 
 const { COLOR } = GLOBALS;
 
@@ -11,9 +12,10 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     create() {
-        const cx = this.game.canvas.width / 2;
-        const cy = this.game.canvas.height / 2;
+        const cx = GLOBALS.G_WINDOW_WIDTH / 2;
+        const cy = GLOBALS.G_WINDOW_HEIGHT / 2;
         this.add.text(cx, cy - 50, 'GAME OVER', { fontSize: '64px', fill: '#ff0000' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
+        this.add.text(cx, cy, `AGE AT DEATH : ${MyMath.age(GameState.pos)}`, { fontSize: '32px', fill: '#ff8080' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
         this.my_input = new MyInput(this);
@@ -36,6 +38,8 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     goto_title(){
+        GameState.sound.jingle_gameover.stop();
+        GameState.sound.se_tap.play();
         this.scene.start('TitleScene');
     }
 

@@ -8,6 +8,7 @@ import { Bullet } from '../objects/Bullet.js';
 import { Option } from '../objects/Option.js';
 
 const COOLDOWN_INTERVAL = 11; //連射間隔
+const CONFUSED_PERIOD = 60; //混乱時間
 const SENSITIVITY = 1.5; //ドラッグ操作に対する自機移動の敏感性
 const ORIGINAL_SIZE = 64;
 
@@ -24,6 +25,8 @@ export class Player {
         this.cooldown = 0;
         this.max_shot = 1;
         this.collision = new Phaser.Geom.Rectangle(-this.size /2 , -this.size /2, this.size, this.size);  // 中心からの相対矩形
+        this.isConfused = false;
+        this.confused_count = CONFUSED_PERIOD;
         this.alive = true;
 
         this.options = [];
@@ -48,14 +51,18 @@ export class Player {
 
     move(my_input){
 
+        if (this.isConfused){
+            this.confused_count -= 1 * GameState.ff;
+            if (this.confused_count <= 0){
+                this.isConfused = false;
+            }
+            return;
+        }
+
         let isMoving = false;
 
         if (my_input.dx != 0 || my_input.dy != 0){
             // マウス・タッチによる移動
-            // const threshold = this.speed * GameState.ff;
-            // console.log("threshold = ",this.speed * GameState.ff, my_input.dx, my_input.dy);
-            // const dx = Math.max(-threshold, Math.min(threshold, my_input.dx * SENSITIVITY));
-            // const dy = Math.max(-threshold, Math.min(threshold, my_input.dy * SENSITIVITY));
             const dx = my_input.dx * SENSITIVITY;
             const dy = my_input.dy * SENSITIVITY;
             this.pos.x = Math.max(this.size /2, Math.min(GLOBALS.G_WIDTH - this.size /2,
@@ -94,7 +101,7 @@ export class Player {
     }
 
     shoot(player_bullets, fire_a, fire_b){
-        if (fire_a || fire_b){
+        if ((fire_a || fire_b) && ! this.isConfused){
             if (fire_a){
                 this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_A;
             } else if (fire_b){
@@ -159,7 +166,14 @@ export class Player {
         // 連射間隔
         this.cooldown = Math.max(0, this.cooldown - 1 * GameState.ff);
         // スプライトの更新
-        MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
+        if (this.isConfused){
+            let pos = this.pos.clone();
+            pos.x += Math.floor(Math.random()*3) - 1;
+            pos.y += Math.floor(Math.random()*3) - 1;
+            MyDraw.updateSprite(this.sprite, pos, this.size / ORIGINAL_SIZE);
+        } else {
+            MyDraw.updateSprite(this.sprite, this.pos, this.size / ORIGINAL_SIZE);
+        }
 
         this.graphics.clear();
         // マーカーの描画
@@ -172,6 +186,11 @@ export class Player {
         this.energy = Math.max(0, this.energy);
         this.speed = 1 + 5 * (this.energy / 100);
         this.max_shot = 1 + Math.floor(3 * (this.energy  / 100));
+    }
+
+    confuse(){
+        this.isConfused = true;
+        this.confused_count = CONFUSED_PERIOD;
     }
 
     destroy(){

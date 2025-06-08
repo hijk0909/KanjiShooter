@@ -10,13 +10,25 @@ export const GLOBALS = {
         BLACK : 0x000000,
         WHITE : 0xffffff,
         GRAY : 0x808080,
-        RED: 0xff0000
+        RED : 0xff0000,
+        BG : 0x101012
     },
 
     POS: {
-        MAX : 10010,
+        MAX : 10100,
         UNIT : 960,
-        GOAL : 400
+        GOAL : 450,
+        FADE : 350,
+        WIPEOUT : 60
+    },
+
+    CAMERA: {
+        X: 600 /2,
+        Y: 800,
+        Z: -450,
+        UPDOWN: -32,
+        RIGHTLEFT: 0,
+        ROLL: 0
     },
 
     OPTION: {
@@ -39,7 +51,8 @@ export const GLOBALS = {
             DISASTER : 6,
             DEVIL : 7,
             WALL : 8,
-            BARRIER : 9
+            BARRIER : 9,
+            CUSTOMER : 10
         },
         STATE: {
             IN : 0,
@@ -57,8 +70,15 @@ export const GLOBALS = {
             PARENT : 4,
             ILL : 5,
             VIRTUE : 6,
-            CONFU : 7
+            CONFU : 7,
+            MONEY : 8
         },
+        STATE: {
+            PREP : 0,
+            AIM : 1,
+            ACCEL : 2,
+            NORMAL : 3
+        }
     },
 
     ITEM: {
@@ -77,8 +97,14 @@ export const GLOBALS = {
 
     EFFECT: {
         TYPE: {
-            EXPLOSION : 0
+            EXPLOSION : 0,
+            BLESSING: 1,
+            TIME: 2
         },
+        STATE: {
+            NORMAL : 0,
+            OUT : 1
+        }
     },
 
     SE: {

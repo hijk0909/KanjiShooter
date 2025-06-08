@@ -2,6 +2,7 @@
 import { GLOBALS } from '../GameConst.js';
 import { GameState } from '../GameState.js';
 import { MyDraw } from '../utils/DrawUtils.js';
+import { BG } from '../objects/BG.js';
 
 const ORIGINAL_SIZE = 64;
 const INIT_YU = -128;
@@ -13,6 +14,7 @@ export class Ending {
     constructor(scene){
         this.scene = scene;
         this.isSetup = false;
+        this.isSetup_wipe = false;
         
         this.sprite_partner = null;
         this.sprite_father = null;
@@ -84,12 +86,36 @@ export class Ending {
             this.setup();
         }
 
-        this.count += 1;
-        const diff = Math.max(0, 380 - this.count * 0.8) * GameState.ff;
+        // 背景色の変更とズームアウト
+        if ( pos < GLOBALS.POS.FADE){
+            const r = Math.floor(((GLOBALS.POS.FADE - pos) / GLOBALS.POS.FADE) * 255);
+            const color = (r << 16) | (r << 8) | r;
+            GameState.bg.set_color(color);
+            const ratio1 = ((GLOBALS.POS.FADE - pos) / GLOBALS.POS.FADE); // 0 → 1
+            const ratio2 = pos / GLOBALS.POS.FADE; // 1 → 0
+            const upDown = GLOBALS.CAMERA.UPDOWN * (1 - ratio1 * ratio1);
+            const zdist = ratio1 * ratio1 * 500;
+            const ydiff = GLOBALS.G_HEIGHT / 2 - GLOBALS.CAMERA.Y;
+            const y = GLOBALS.CAMERA.Y + ydiff * ratio1 * ratio1;
+            GameState.camera = {
+                    position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, y, GLOBALS.CAMERA.Z - zdist),
+                    rotation: { upDown: upDown, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
+            };
+        }
 
-        this.pos_father.y = 100 - diff;
+        // ワイプアウトの設定
+        if ( pos < GLOBALS.POS.WIPEOUT && !this.isSetupWipe){
+            this.setup_wipeout();
+            this.isSetupWipe = true;
+        }
+
+        // 親族の描画
+        this.count += 1;
+        const diff = Math.max(0, 380 - this.count * 0.8 * GameState.ff);
+
+        this.pos_father.y = 200 - diff;
         MyDraw.updateSprite(this.sprite_father, this.pos_father, 60 / ORIGINAL_SIZE);
-        this.pos_mother.y = 100 - diff;
+        this.pos_mother.y = 200 - diff;
         MyDraw.updateSprite(this.sprite_mother, this.pos_mother, 60 / ORIGINAL_SIZE);
         if (this.sprite_partner){
             this.pos_partner.y = GLOBALS.G_HEIGHT / 2 - 100 - diff;
@@ -118,6 +144,44 @@ export class Ending {
                 MyDraw.updateSprite(this.sprite_grandchildren[i], this.pos_grandchildren[i], 40 / ORIGINAL_SIZE);
             }
         }
+    }
+
+    setup_wipeout(){
+        // ワイプ・アウト
+        this.overlay = this.scene.add.rectangle(0, 0, GLOBALS.G_WINDOW_WIDTH, GLOBALS.G_WINDOW_HEIGHT, 0x000000, 1)
+            .setOrigin(0)
+            .setDepth(900)
+            .setAlpha(0);
+        let maskGraphics = this.scene.make.graphics({ x: 0, y: 0, add: false });
+        let mask = maskGraphics.createGeometryMask();
+        mask.invertAlpha = true;
+        this.overlay.setMask(mask);
+        let maskData = { radius: 500 };
+        this.scene.tweens.add({
+            targets: maskData,
+            radius: 1,
+            duration: 1000,
+            ease: 'Sine.easeOut',
+            onUpdate: () => {
+                maskGraphics.clear();
+                maskGraphics.fillStyle(0xffffff);
+                maskGraphics.beginPath();
+                maskGraphics.arc(GLOBALS.G_WINDOW_WIDTH / 2, GLOBALS.G_WINDOW_HEIGHT / 2, maskData.radius, 0, Math.PI * 2);
+                maskGraphics.fillPath();
+            }
+        });
+
+        this.scene.tweens.add({
+            targets : this.overlay,
+            alpha: 1,          // 0→1
+            duration: 500,
+            ease    : 'Linear'
+        });
+
+        // 完了時の後処理
+        this.scene.time.delayedCall(2000, () => {
+            this.overlay.destroy();
+        });
     }
 
     add_friend(){

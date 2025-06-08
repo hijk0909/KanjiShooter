@@ -62,6 +62,29 @@ export class NPC {
             this.size = 60;
             this.pos = new Phaser.Math.Vector2(x, -30);
             this.dy = 5.5;
+        } else if ( this.type == GLOBALS.NPC.TYPE.DEVIL){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cdevil');
+            this.size = 55;
+            this.state = GLOBALS.NPC.STATE.IN;
+            this.counter = 100;
+        } else if ( this.type == GLOBALS.NPC.TYPE.WALL){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cwall_anim');
+            if (!this.scene.anims.exists('cwall_anims')) {
+                this.scene.anims.create({key:'cwall_anims',
+                    frames: this.scene.anims.generateFrameNumbers('cwall_anim', { start: 0, end: 7 }),
+                    frameRate: 8, repeat: -1
+                });
+            }
+            this.sprite.play('cwall_anims');
+            this.dy = 1;
+            this.counter = 0;
+        } else if ( this.type == GLOBALS.NPC.TYPE.BARRIER){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cbarrier');
+            this.dy = 1;
+            this.shot_cooldown = 0;
+        } else if ( this.type == GLOBALS.NPC.TYPE.CUSTOMER){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'ccustomer');
+            this.dy = (Math.random()*1 + 1);
         }
 
         this.sprite.visible = false;
@@ -142,12 +165,25 @@ export class NPC {
                 this.dy =  this.pos.y < GLOBALS.G_HEIGHT / 3 ? 1 : 0;
                 if (this.pos.x > GLOBALS.G_WIDTH / 2 + 200) {this.dx = -1;}
                 if (this.pos.x < GLOBALS.G_WIDTH / 2 - 200) {this.dx = 1;}
-                this.shot_cooldown -= 1;
+                this.shot_cooldown -= 1 * GameState.ff;
                 if (this.shot_cooldown <= 0){
-                    this.shot_cooldown = 20;
-                    const blt = new Bullet(this.scene);
+                    this.shot_cooldown = 25;
+
+                    let blt = null;
+                    let angle = 0;
+
+                    blt = new Bullet(this.scene);
                     blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                    angle = MyMath.target_angle(this.pos, GameState.player.pos, MyMath.radians(-10));
+                    blt.setVelocity(Math.cos(angle), Math.sin(angle));
                     GameState.npc_bullets.push(blt);
+
+                    blt = new Bullet(this.scene);
+                    blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                    angle = MyMath.target_angle(this.pos, GameState.player.pos, MyMath.radians(+10));
+                    blt.setVelocity(Math.cos(angle), Math.sin(angle));
+                    GameState.npc_bullets.push(blt);
+
                 }
                 this.lifespan -= 1;
                 if (this.lifespan <= 0){
@@ -167,19 +203,89 @@ export class NPC {
                     const blt = new Bullet(this.scene);
                     blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
                     const rad = MyMath.radians(angle);
-                    blt.setVelocity(Math.sin(rad), Math.cos(rad));
+                    blt.setVelocity(Math.cos(rad), Math.sin(rad));
                     GameState.npc_bullets.push(blt);                    
                 }
                 for (let angle = 45; angle < 360; angle += 90){
                     const blt = new Bullet(this.scene);
                     blt.setType(GLOBALS.BULLET.TYPE.ILL, this.pos);
                     const rad = MyMath.radians(angle);
-                    blt.setVelocity(Math.sin(rad), Math.cos(rad));
+                    blt.setVelocity(Math.cos(rad), Math.sin(rad));
                     GameState.npc_bullets.push(blt);                     
                 }
                 this.alive = false;
             }
             this.pos.x += this.dx * GameState.ff;
+            this.pos.y += this.dy * GameState.ff;
+        // 魔
+        } else if ( this.type == GLOBALS.NPC.TYPE.DEVIL){
+            if ( this.state == GLOBALS.NPC.STATE.IN){
+                this.counter -= 1 * GameState.ff;
+                this.sprite.setAlpha((100 - this.counter)/100);
+                if (this.counter <= 0){
+                    this.state = GLOBALS.NPC.STATE.NORMAL;
+                    this.counter = 20;
+                }
+            } else if ( this.state == GLOBALS.NPC.STATE.NORMAL){
+                this.counter -= 1 * GameState.ff;
+                if (this.counter <=0){
+                    this.state = GLOBALS.NPC.STATE.OUT;
+                    this.counter = 100;
+                    for (let angle = 0; angle < 360; angle += 45){
+                        const blt = new Bullet(this.scene);
+                        blt.setType(GLOBALS.BULLET.TYPE.CONFU, this.pos);
+                        const rad = MyMath.radians(angle);
+                        blt.setVelocity(Math.cos(rad), Math.sin(rad));
+                        GameState.npc_bullets.push(blt);                    
+                    }
+                }
+            } else if ( this.state == GLOBALS.NPC.STATE.OUT ){
+                this.counter -= 1 * GameState.ff;
+                this.sprite.setAlpha(this.counter/100);
+                if (this.counter <=0){
+                    this.alive = false;
+                }
+            }
+        // 壁
+        } else if ( this.type == GLOBALS.NPC.TYPE.WALL){
+            this.pos.y += this.dy * GameState.ff;
+
+        // 障
+        } else if ( this.type == GLOBALS.NPC.TYPE.BARRIER){
+            this.pos.y += this.dy * GameState.ff;
+            this.sprite.angle += 4 * GameState.ff;
+
+            this.shot_cooldown -= 1 * GameState.ff;
+            if (this.shot_cooldown <= 0){
+                this.shot_cooldown = 180;
+
+                let blt = null;
+                let angle = 0;
+
+                // マルチウェイ弾
+                blt = new Bullet(this.scene);
+                blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                angle = MyMath.target_angle(this.pos, GameState.player.pos, 0);
+                blt.setVelocity(Math.cos(angle), Math.sin(angle));
+                GameState.npc_bullets.push(blt); 
+
+                for (let i = 0 ; i < GameState.player.options.length ; i++){
+                    blt = new Bullet(this.scene);
+                    blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                    angle = MyMath.target_angle(this.pos, GameState.player.pos, MyMath.radians(30*(i+1)));
+                    blt.setVelocity(Math.cos(angle), Math.sin(angle));
+                    GameState.npc_bullets.push(blt);   
+
+                    blt = new Bullet(this.scene);
+                    blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                    angle = MyMath.target_angle(this.pos, GameState.player.pos, MyMath.radians(-30*(i+1)));
+                    blt.setVelocity(Math.cos(angle), Math.sin(angle));
+                    GameState.npc_bullets.push(blt);
+                }
+
+            }
+        // 客
+        } else if ( this.type == GLOBALS.NPC.TYPE.CUSTOMER){
             this.pos.y += this.dy * GameState.ff;
         }
 
@@ -190,15 +296,16 @@ export class NPC {
             this.alive = false;
     }
 
-    draw(graphics) {
-
-    }
-
     hit(){
         if (this.pos.y > GLOBALS.G_HEIGHT / 5){
-            this.pos.y -= 10;
+            if (this.type == GLOBALS.NPC.TYPE.BOSS ||
+                this.type == GLOBALS.NPC.TYPE.FRIEND){
+                this.pos.y -= 10 * GameState.ff;
+            }
         }
-        this.hp -= 1;
+        if (this.type == GLOBALS.NPC.TYPE.BOSS){
+            this.hp -= 1;
+        }
         return this.hp;
     }
 

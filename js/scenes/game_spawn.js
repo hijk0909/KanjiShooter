@@ -8,6 +8,7 @@ export class Spawn {
     constructor(scene) {
         this.scene = scene;
 
+        // 固定座標・アイテム
         this.item_gpos = [
             { gpos: GLOBALS.POS.MAX * 0.88, type: GLOBALS.ITEM.TYPE.POISON },
             { gpos: GLOBALS.POS.MAX * 0.82, type: GLOBALS.ITEM.TYPE.WIFE },
@@ -19,21 +20,83 @@ export class Spawn {
             { gpos: GLOBALS.POS.MAX * 0.25, type: GLOBALS.ITEM.TYPE.FORCE }
         ];
 
+        // 固定座標・NPC
         this.npc_gpos = [
-            { gpos: GLOBALS.POS.MAX * 0.995, type: GLOBALS.NPC.TYPE.FATHER,
+            { gpos: GLOBALS.POS.MAX * 0.989, type: GLOBALS.NPC.TYPE.FATHER,
                 pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, 0) },
-            { gpos: GLOBALS.POS.MAX * 0.995, type: GLOBALS.NPC.TYPE.MOTHER,
+            { gpos: GLOBALS.POS.MAX * 0.989, type: GLOBALS.NPC.TYPE.MOTHER,
                 pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) },
-            { gpos: GLOBALS.POS.MAX * 0.58,  type: GLOBALS.NPC.TYPE.BOSS,
-                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) },
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 -250 - 36, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 -250, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 -250 + 36, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 +250 - 36, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 +250, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.94, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 +250 + 36, 0) }, //壁
+            { gpos: GLOBALS.POS.MAX * 0.90, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 250, 0) }, //障
+            { gpos: GLOBALS.POS.MAX * 0.90, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 250, 0) }, //障
+
+            { gpos: GLOBALS.POS.MAX * 0.87,  type: GLOBALS.NPC.TYPE.DEVIL,
+            pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT / 3) }, //魔
+            { gpos: GLOBALS.POS.MAX * 0.84,  type: GLOBALS.NPC.TYPE.DEVIL,
+            pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 100, GLOBALS.G_HEIGHT / 2) }, //魔-左
+            { gpos: GLOBALS.POS.MAX * 0.84,  type: GLOBALS.NPC.TYPE.DEVIL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 100, GLOBALS.G_HEIGHT / 2) }, //魔-右
+            { gpos: GLOBALS.POS.MAX * 0.81,  type: GLOBALS.NPC.TYPE.DEVIL,
+            pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, GLOBALS.G_HEIGHT / 2) }, //魔-左
+            { gpos: GLOBALS.POS.MAX * 0.81,  type: GLOBALS.NPC.TYPE.DEVIL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT / 2) }, //魔-中
+            { gpos: GLOBALS.POS.MAX * 0.81,  type: GLOBALS.NPC.TYPE.DEVIL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 180, GLOBALS.G_HEIGHT / 2) }, //魔-右
+
+            { gpos: GLOBALS.POS.MAX * 0.75, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, 0) }, //障-左
+            { gpos: GLOBALS.POS.MAX * 0.75, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) }, //障-右
+            { gpos: GLOBALS.POS.MAX * 0.67, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, 0) }, //障-左
+            { gpos: GLOBALS.POS.MAX * 0.67, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) }, //障-右
+            { gpos: GLOBALS.POS.MAX * 0.64, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, 0) }, //障-左
+            { gpos: GLOBALS.POS.MAX * 0.64, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) }, //障-右
+            { gpos: GLOBALS.POS.MAX * 0.59, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 200, 0) }, //障-左
+            { gpos: GLOBALS.POS.MAX * 0.59, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) }, //障-右
+
+            { gpos: GLOBALS.POS.MAX * 0.56,  type: GLOBALS.NPC.TYPE.BOSS,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, // 悪
+            { gpos: GLOBALS.POS.MAX * 0.44,  type: GLOBALS.NPC.TYPE.DEVIL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT / 2) }, // 魔
             { gpos: GLOBALS.POS.MAX * 0.40,  type: GLOBALS.NPC.TYPE.DISASTER,
-                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) },
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, // 災
             { gpos: GLOBALS.POS.MAX * 0.30,  type: GLOBALS.NPC.TYPE.DISASTER,
-                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) },
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, // 災
             { gpos: GLOBALS.POS.MAX * 0.20,  type: GLOBALS.NPC.TYPE.DISASTER,
-                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, //災,
+            { gpos: GLOBALS.POS.MAX * 0.15,  type: GLOBALS.NPC.TYPE.DEVIL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT / 2) }, // 魔
+            { gpos: GLOBALS.POS.MAX * 0.15, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 - 100, 0) }, //障-左
+            { gpos: GLOBALS.POS.MAX * 0.15, type: GLOBALS.NPC.TYPE.BARRIER,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 100, 0) }, //障-右
+            { gpos: GLOBALS.POS.MAX * 0.15, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 -250, 0) }, //壁-左
+            { gpos: GLOBALS.POS.MAX * 0.15, type: GLOBALS.NPC.TYPE.WALL,
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 +250, 0) }, //壁-右
         ];
 
+        // エリア指定・NPC
+        // POS.UNIT = 960 が 10歳の目安
         this.npc_garea = [
             { gpos: GLOBALS.POS.MAX * 0.99, area: 320, interval: 130,
                 type: GLOBALS.NPC.TYPE.ENEMY },
@@ -47,33 +110,37 @@ export class Spawn {
                 type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.79, area: 780, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
-            { gpos: GLOBALS.POS.MAX * 0.70, area: 1450, interval: 35,
-                type: GLOBALS.NPC.TYPE.ENEMY },
+            { gpos: GLOBALS.POS.MAX * 0.78, area: 4000, interval: 370,
+                type: GLOBALS.NPC.TYPE.CUSTOMER }, //「客」・出現開始
+            { gpos: GLOBALS.POS.MAX * 0.70, area: 1450, interval: 60,
+                type: GLOBALS.NPC.TYPE.ENEMY }, // ボス前の敵
             { gpos: GLOBALS.POS.MAX * 0.69, area: 1650, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
-            { gpos: GLOBALS.POS.MAX * 0.50, area: 1150, interval: 30,
-                type: GLOBALS.NPC.TYPE.ENEMY },
+            { gpos: GLOBALS.POS.MAX * 0.51, area: 1150, interval: 45,
+                type: GLOBALS.NPC.TYPE.ENEMY }, // ボス後の敵
             { gpos: GLOBALS.POS.MAX * 0.49, area: 1150, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
+             { gpos: GLOBALS.POS.MAX * 0.42, area: 160, interval: 20,
+                type: GLOBALS.NPC.TYPE.WALL }, //「壁」・群生
             { gpos: GLOBALS.POS.MAX * 0.35, area: 560, interval: 30,
                 type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.34, area: 560, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
             { gpos: GLOBALS.POS.MAX * 0.33, area: 560, interval: 300,
-                type: GLOBALS.NPC.TYPE.OLD },
+                type: GLOBALS.NPC.TYPE.OLD }, //「老」・初登場
             { gpos: GLOBALS.POS.MAX * 0.28, area: 710, interval: 90,
                 type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.27, area: 710, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
             { gpos: GLOBALS.POS.MAX * 0.26, area: 710, interval: 180,
                 type: GLOBALS.NPC.TYPE.OLD },
-            { gpos: GLOBALS.POS.MAX * 0.19, area: 550, interval: 180,
+            { gpos: GLOBALS.POS.MAX * 0.19, area: 550, interval: 120,
                 type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.18, area: 550, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
             { gpos: GLOBALS.POS.MAX * 0.17, area: 550, interval: 90,
                 type: GLOBALS.NPC.TYPE.OLD },
-            { gpos: GLOBALS.POS.MAX * 0.12, area: 400, interval: 240,
+            { gpos: GLOBALS.POS.MAX * 0.12, area: 400, interval: 200,
                 type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.11, area: 400, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },

@@ -66,9 +66,17 @@ export class Bullet {
             this.count = 120;
         } else if ( this.type === GLOBALS.BULLET.TYPE.CONFU){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bconfu');
-            this.size = 50;
-            this.speed = 3;
+            this.size = 30;
+            this.speed = 2.0;
             this.aim(GameState.player.pos);
+            this.state = GLOBALS.BULLET.STATE.PREP;
+            this.count = 38;
+        } else if ( this.type === GLOBALS.BULLET.TYPE.MONEY){
+            this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bmoney');
+            this.size = 40;            
+            this.speed = 6;
+            this.dx = 0;
+            this.dy = -1;
         }
 
         this.sprite.visible = false;
@@ -97,21 +105,51 @@ export class Bullet {
     }
 
     update() {
+        // (友)-励、(親)-愛、(客)-金
         if (this.type === GLOBALS.BULLET.TYPE.FRIEND ||
-            this.type === GLOBALS.BULLET.TYPE.PARENT){
+            this.type === GLOBALS.BULLET.TYPE.PARENT ||
+            this.type === GLOBALS.BULLET.TYPE.MONEY){
                 const {dx, dy} = MyMath.rotate_towards_target(
                     this.pos, GameState.player.pos, this.dx, this.dy, 5 * GameState.ff);
                 this.dx = dx;
                 this.dy = dy;
+        // (老) - 病・徳
         } else if ( this.type === GLOBALS.BULLET.TYPE.ILL ||
                     this.type === GLOBALS.BULLET.TYPE.VIRTUE){
-                if (this.count > 0){
-                    this.count -= 1;
-                    const {dx,dy} = MyMath.rotate_towards_target(
+            if (this.count > 0){
+                this.count -= 1 * GameState.ff;
+                const {dx,dy} = MyMath.rotate_towards_target(
                     this.pos, GameState.player.pos, this.dx, this.dy, 1 * GameState.ff);
-                    this.dx = dx;
-                    this.dy = dy;
+                this.dx = dx;
+                this.dy = dy;
+            }
+        // (魔) - 惑
+        } else if ( this.type === GLOBALS.BULLET.TYPE.CONFU){
+            if (this.state === GLOBALS.BULLET.STATE.PREP){
+                this.count -= 1 * GameState.ff;
+                if (this.count <= 0){
+                    this.count = 45;
+                    this.state = GLOBALS.BULLET.STATE.AIM;
                 }
+            } else if (this.state === GLOBALS.BULLET.STATE.AIM){
+                const {dx,dy} = MyMath.rotate_towards_target(
+                    this.pos, GameState.player.pos, this.dx, this.dy, 4 * GameState.ff);
+                this.dx = dx;
+                this.dy = dy;
+                this.speed *= 1.02 ** GameState.ff;
+                this.count -= 1 * GameState.ff;
+                if (this.count <= 0){
+                    this.count = 25;
+                    this.state = GLOBALS.BULLET.STATE.ACCEL;
+                }
+            } else if (this.state === GLOBALS.BULLET.STATE.ACCEL){
+                this.speed *= 1.02 ** GameState.ff;
+                this.count -= 1 * GameState.ff;
+                if (this.count <= 0){
+                    this.state = GLOBALS.BULLET.STATE.NORMAL;
+                }
+            } else if (this.state === GLOBALS.BULLET.STATE.NORMAL){
+            }
         }
         // console.log("NPC Bullet",this.type, this.pos, this.dx, this.dy);
 
