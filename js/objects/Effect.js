@@ -25,7 +25,7 @@ export class Effect {
         if (this.type == GLOBALS.EFFECT.TYPE.EXPLOSION){
             this.num = 8;
             this.sprites = new Array(this.num);
-            this.size = 20;
+            this.size = 30;
             this.radius = 10;
             for (let i=0;i<this.num;i++){
                 this.sprites[i] = this.scene.add.sprite(pos.x, pos.y, 'ex');
@@ -45,6 +45,21 @@ export class Effect {
                 this.sprites[i] = this.scene.add.sprite(pos.x, pos.y, 'ebl')
                 .setAlpha(this.alpha);
             this.state = GLOBALS.EFFECT.STATE.NORMAL;
+            }
+        } else if (this.type == GLOBALS.EFFECT.TYPE.BLESSING2){
+            this.num = 25;
+            this.sprites = new Array(this.num);
+            this.size = 15;
+            this.radius = 10;
+            this.theta_offset = 0;
+            this.start_alpha = 0.5;
+            this.alpha = this.start_alpha;
+            this.count = 0;
+            this.max_count = 240;
+            this.target_obj = null;
+            for (let i=0;i<this.num;i++){
+                this.sprites[i] = this.scene.add.sprite(pos.x, pos.y, 'ebl')
+                .setAlpha(this.alpha);
             }
         } else if (this.type == GLOBALS.EFFECT.TYPE.TIME) {
             this.alpha = 0.6;
@@ -87,28 +102,42 @@ export class Effect {
                     this.alive = false;
                 }
             }
-            this.theta_offset += 1 * GameState.ff;
-            for (let i=0;i<this.num;i++){
-                const offset = 2.0 / this.num;
-                const y = i * offset - 1.0 + (offset / 2.0);
-                const r = Math.sqrt(1.0 - y * y);
-                const golden_angle = Math.PI * (3.0 - Math.sqrt(5.0));
-                const theta = i * golden_angle;
-                const x = r * Math.cos(theta - this.theta_offset * 0.02);
-                const z = r * Math.sin(theta - this.theta_offset * 0.02);
-                const p = GameState.player.pos;
-                const rad = this.radius;
-                const point = new Phaser.Math.Vector3(p.x + x * rad, p.y + y * rad, z * rad);
-                this.sprites[i].setAlpha(this.alpha);
-                MyDraw.updateSprite3(this.sprites[i], point, this.size / ORIGINAL_SIZE);
-            }
+            this.update_blessing(GameState.player.pos);
+        } else if (this.type == GLOBALS.EFFECT.TYPE.BLESSING2){
+            this.count += 1 * GameState.ff;
+            this.radius += 0.2 * GameState.ff;
+            this.alpha = this.start_alpha * (this.max_count - this.count) / this.max_count;
+                if (this.count >= this.max_count_out){
+                    this.alive = false;
+                }
+            this.update_blessing(this.target_obj.pos);
         } else if (this.type == GLOBALS.EFFECT.TYPE.TIME){
             this.pos3.y += 6 * GameState.ff;
-            // console.log("update", this.pos3);
             MyDraw.updateSprite3(this.sprite, this.pos3, this.size / ORIGINAL_SIZE);
             if (this.pos3.y > GLOBALS.G_HEIGHT){
                 this.alive = false;
             } 
+        }
+    }
+
+    set_target_obj(obj){
+        this.target_obj = obj;
+    }
+
+    update_blessing(p){
+        this.theta_offset += 1 * GameState.ff;
+        for (let i=0;i<this.num;i++){
+            const offset = 2.0 / this.num;
+            const y = i * offset - 1.0 + (offset / 2.0);
+            const r = Math.sqrt(1.0 - y * y);
+            const golden_angle = Math.PI * (3.0 - Math.sqrt(5.0));
+            const theta = i * golden_angle;
+            const x = r * Math.cos(theta - this.theta_offset * 0.02);
+            const z = r * Math.sin(theta - this.theta_offset * 0.02);
+            const rad = this.radius;
+            const point = new Phaser.Math.Vector3(p.x + x * rad, p.y + y * rad, z * rad);
+            this.sprites[i].setAlpha(this.alpha);
+            MyDraw.updateSprite3(this.sprites[i], point, this.size / ORIGINAL_SIZE);
         }
     }
 

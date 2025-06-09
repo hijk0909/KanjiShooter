@@ -7,6 +7,10 @@ export class MyMath {
         return degrees * (Math.PI / 180);
     }
 
+    static degrees(radians){
+        return radians * (180 / Math.PI);
+    }
+
     static copysign(x,y){
         return Math.abs(x) * Math.sign(y);
     }
@@ -16,6 +20,7 @@ export class MyMath {
         return distance < (size1 + size2)
     }
 
+    // 現在速度(dx,dy)を最大 max_angle_deg の範囲で回転させる
     static rotate_towards_target(src, target, dx, dy, max_angle_deg){
         const target_angle = Math.atan2(target.y - src.y, target.x - src.x);
         const current_angle = Math.atan2(dy, dx);
@@ -30,6 +35,7 @@ export class MyMath {
         return {dx : new_dx, dy : new_dy};
     }
 
+    // 偏差つき角度計算（angle_diff = 0 の場合は目標への角度のまま）
     static target_angle(src, target, angle_diff){
         const target_angle = Math.atan2(target.y - src.y, target.x - src.x);
         return (target_angle + angle_diff + Math.PI) % ( 2 * Math.PI) - Math.PI;

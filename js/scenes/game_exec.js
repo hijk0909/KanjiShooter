@@ -52,6 +52,7 @@ export class Exec {
                         GameState.npcs.splice(j,1);
 
                         GameState.score += 100;
+                        GameState.e_enemy += 1;
                         GameState.sound.se_expl.play();
                         break;
                     // 自機・攻撃弾とボス敵（耐久力あり）
@@ -68,6 +69,7 @@ export class Exec {
                             eff.setType(GLOBALS.EFFECT.TYPE.EXPLOSION, npc.pos);
                             GameState.effects.push(eff);
                             GameState.score += 3000;
+                            GameState.e_enemy += 1;
                             GameState.sound.se_expl2.play();
                         } else {
                             GameState.score += 10;
@@ -86,6 +88,7 @@ export class Exec {
                         eff.setType(GLOBALS.EFFECT.TYPE.EXPLOSION, npc.pos);
                         GameState.effects.push(eff);
                         GameState.score += 300;
+                        GameState.e_enemy += 1;
                         GameState.sound.se_expl.play();
                         break;
                     // 自機・攻撃弾と壁（撃・愛とも吸収される）
@@ -176,11 +179,13 @@ export class Exec {
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
                     GameState.player.add_energy(6);
+                    GameState.e_encourage += 1;
                     GameState.sound.se_earn.play();
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.PARENT){
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
                     GameState.player.add_energy(1);
+                    GameState.e_love += 1;
                     GameState.sound.se_earn.play();
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.ILL){
                     npcblt.destroy();
@@ -192,6 +197,7 @@ export class Exec {
                     GameState.npc_bullets.splice(i,1);
                     GameState.score += 300;
                     GameState.player.add_energy(3);
+                    GameState.e_virtue += 1;
                     GameState.sound.se_earn.play();
                 } else if (npcblt.type == GLOBALS.BULLET.TYPE.CONFU){
                     npcblt.destroy();
@@ -202,6 +208,7 @@ export class Exec {
                     npcblt.destroy();
                     GameState.npc_bullets.splice(i,1);
                     GameState.score += 50;
+                    GameState.e_money += 1;
                     GameState.sound.se_earn.play();
                 }
             }
@@ -255,6 +262,13 @@ export class Exec {
                     GameState.ending.set_num_child(p.options.length - 1);
                     item.destroy();
                     GameState.items.splice(i,1);
+
+                    const eff = new Effect(this.scene);
+                    const target_obj = p.options[p.options.length - 1];
+                    eff.setType(GLOBALS.EFFECT.TYPE.BLESSING2, target_obj.pos);
+                    eff.set_target_obj(target_obj);
+                    GameState.effects.push(eff);
+
                     GameState.sound.se_earn.play();
                 // 「強」の取得
                 } else if (item.type == GLOBALS.ITEM.TYPE.FORCE){

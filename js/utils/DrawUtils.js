@@ -4,7 +4,7 @@ import { MyMath } from '../utils/MathUtils.js';
 
 export class MyDraw {
 
-    static updateSprite( sprite, pos, size ){
+    static updateSprite( sprite, pos, size, depth2 = null){
         // 3D → 2D変換
         const point = new Phaser.Math.Vector3(pos.x, pos.y, 0);
         const result = MyMath.projectPoint(point,GameState.camera);
@@ -14,7 +14,11 @@ export class MyDraw {
             sprite.visible = true;
             sprite.setPosition(screenPosition.x, screenPosition.y);
             sprite.setScale(size * ratio);
-            sprite.setDepth(Math.max(-900,-depth));
+            if (depth2){
+                sprite.setDepth(depth2);
+            } else {
+                sprite.setDepth(Math.max(-900,-depth));
+            }
         } else {
             sprite.visible = false;
         }
@@ -47,6 +51,19 @@ export class MyDraw {
             g.lineTo(sp2.x, sp2.y);
             g.strokePath();
         }
+    }
+
+    static set_glow(scene, sprite, color){
+        sprite.preFX.setPadding(32);
+        const fx = sprite.preFX.addGlow(color);
+        scene.tweens.add({
+            targets: fx,
+            outerStrength: 5,
+            duration: 300,
+            yoyo: true,
+            loop: -1,
+            ease: 'sine.inout'
+        });
     }
 
 }

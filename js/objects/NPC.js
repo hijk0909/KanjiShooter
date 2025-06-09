@@ -69,6 +69,7 @@ export class NPC {
             this.counter = 100;
         } else if ( this.type == GLOBALS.NPC.TYPE.WALL){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cwall_anim');
+            this.size = 45;
             if (!this.scene.anims.exists('cwall_anims')) {
                 this.scene.anims.create({key:'cwall_anims',
                     frames: this.scene.anims.generateFrameNumbers('cwall_anim', { start: 0, end: 7 }),
@@ -80,8 +81,10 @@ export class NPC {
             this.counter = 0;
         } else if ( this.type == GLOBALS.NPC.TYPE.BARRIER){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'cbarrier');
-            this.dy = 1;
+            this.size = 50;
+            this.dy = 0.8;
             this.shot_cooldown = 0;
+            this.counter = 0;
         } else if ( this.type == GLOBALS.NPC.TYPE.CUSTOMER){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'ccustomer');
             this.dy = (Math.random()*1 + 1);
@@ -253,7 +256,9 @@ export class NPC {
         // 障
         } else if ( this.type == GLOBALS.NPC.TYPE.BARRIER){
             this.pos.y += this.dy * GameState.ff;
-            this.sprite.angle += 4 * GameState.ff;
+
+            this.counter = (this.counter + 3 * GameState.ff) % 360;            
+            this.sprite.angle = Math.sin(MyMath.radians(this.counter)) * 45;
 
             this.shot_cooldown -= 1 * GameState.ff;
             if (this.shot_cooldown <= 0){

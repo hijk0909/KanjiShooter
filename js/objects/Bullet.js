@@ -24,12 +24,14 @@ export class Bullet {
         this.alive = true;
         if ( this.type === GLOBALS.BULLET.TYPE.PLAYER_L){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpl');
+            MyDraw.set_glow(this.scene, this.sprite, 0x88ffff);
             this.size = 36;
             this.speed = 9;
             this.dx = 0;
             this.dy = -1;
         } else if ( this.type === GLOBALS.BULLET.TYPE.PLAYER_A){
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'bpa');
+            MyDraw.set_glow(this.scene, this.sprite, 0xff8800);
             this.size = 36;
             this.speed = 9;
             this.dx = 0;

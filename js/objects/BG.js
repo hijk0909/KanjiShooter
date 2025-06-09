@@ -38,7 +38,7 @@ export class BG {
                 const ev = this.scrollEvents[i];
                 if (ev.pos >= pos && ev.pos < this.last_pos) {
                     const y = new Year(this.scene);
-                    const sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1);
+                    const sprite = this.scene.add.sprite(pos.x, pos.y, ev.spriteKey).setOrigin(0,1).setDepth(-990);
                     y.setType(sprite,new Phaser.Math.Vector2(0,0));
                     this.years.push(y);
                     const b = new Border(this.graphics);
@@ -85,7 +85,8 @@ class Year {
     }
     update(){
         this.pos.y += 1 * GameState.ff;
-        MyDraw.updateSprite(this.sprite, this.pos, 1);
+        // year は背面に描画
+        MyDraw.updateSprite(this.sprite, this.pos, 1, -900);
         if (this.pos.y > GLOBALS.G_HEIGHT){
             this.alive = false;
         }

@@ -13,16 +13,27 @@ export class GameClearScene extends Phaser.Scene {
     create() {
         const cx = GLOBALS.G_WINDOW_WIDTH / 2;
         const cy = GLOBALS.G_WINDOW_HEIGHT / 2;
-        this.add.text(cx, cy - 50, 'GAME CLEAR', { fontSize: '64px', fill: '#ffffff' , stroke: COLOR.WHITE, strokeThickness: 2}).setOrigin(0.5,0.5);
-        this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
-        this.add.text(cx, cy , `Your final score is:${GameState.score}`,{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
+        this.add.text(cx, 60, 'GAME CLEAR', { fontSize: '64px', fill: '#ffffff' , stroke: COLOR.WHITE, strokeThickness: 2}).setOrigin(0.5,0.5);
+        this.add.text(cx, 105 , `Your final score is:${GameState.score}`,{ fontSize: '32px', fill: '#fff' }).setOrigin(0.5,0.5);
+        this.add.text(cx, cy + 220, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
+        const rx = 250;
+        const ry = 150;
+        const ru = 30;
+
+        const sty = { font: '16px Arial', fill: '#eeeeee', shadow: {offsetX : 1, offsetY: 1, color : '#ccc', blur:0, fill: true, stroke: false }};
+        this.add.text(rx, ry + ru * 0, `ENEMY DEFEATED: ${GameState.e_enemy}`, sty).setOrigin(0,0.5);
+        this.add.text(rx, ry + ru * 1, `LOVE FROM PARENTS: ${GameState.e_love}`, sty).setOrigin(0,0.5);
+        this.add.text(rx, ry + ru * 2, `ENCOURAGE FROM FRIEND: ${GameState.e_encourage}`, sty).setOrigin(0,0.5);
+        this.add.text(rx, ry + ru * 3, `MONEY FROM CUSTOMER: ${GameState.e_money}`, sty).setOrigin(0,0.5);
+        this.add.text(rx, ry + ru * 4, `VIRTUE GATHERD: ${GameState.e_virtue}`, sty).setOrigin(0,0.5);
+        
         this.my_input = new MyInput(this);
         this.my_input.registerPadConnect(() => this.show_pad());
         if (this.my_input.pad){this.show_pad();}
         this.my_input.registerNextAction(() => this.goto_title());
 
-        const btn_play = this.add.image(cx, cy + 60, 'btn_tap')
+        const btn_play = this.add.image(cx, cy + 170, 'btn_tap')
         .setOrigin(0.5,0.5)
         .setInteractive()
         .on('pointerdown', () => {this.goto_title();})
@@ -59,7 +70,7 @@ export class GameClearScene extends Phaser.Scene {
     show_pad(){
         const cx = this.game.canvas.width / 2;
         const cy = this.game.canvas.height / 2;
-        this.add.text(cx, cy + 140, ' or PRESS START BUTTON',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5, 0.5);
+        this.add.text(cx, cy + 240, ' or PRESS START BUTTON',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5, 0.5);
     }
 
     goto_title(){

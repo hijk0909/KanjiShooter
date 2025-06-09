@@ -99,7 +99,8 @@ export const GLOBALS = {
         TYPE: {
             EXPLOSION : 0,
             BLESSING: 1,
-            TIME: 2
+            BLESSING2 : 2,
+            TIME: 3
         },
         STATE: {
             NORMAL : 0,

@@ -11,7 +11,6 @@ export const  GameState = {
     score : 0,
     camera : null,
     sound : null,
-    se: null,  //[DEBUG]
     debug : false,
 
     // 表示オブジェクト管理
@@ -22,10 +21,23 @@ export const  GameState = {
     items : [],
     effects : [],
 
+    // ゲームクリア画面用の集計値
+    e_enemy : 0,
+    e_love : 0,
+    e_encourage : 0,
+    e_money : 0,
+    e_virtue : 0,
+
     reset(){
         this.pos = GLOBALS.POS.MAX;
         this.married = false;
         this.ending = null;
         this.score = 0;
+
+        this.e_enemy = 0;
+        this.e_love = 0;
+        this.e_encourage = 0;
+        this.e_money = 0;
+        this.e_virtue = 0;
     }
 };

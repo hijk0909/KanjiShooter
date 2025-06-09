@@ -62,6 +62,7 @@
                     parent: 'game-container',
                 },
                 // fps: {limit:15}, // [DEBUG]
+                fx: { glow: { distance: 32, quality: 0.1 } },
                 input: { gamepad: true , keyboard: true },
                 backgroundColor: '#000000',
                 scene: [AssetLoader, TitleScene, GameScene, UIScene, GameOverScene, GameClearScene]

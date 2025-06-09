@@ -74,7 +74,7 @@ export class Spawn {
                 pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2 + 200, 0) }, //障-右
 
             { gpos: GLOBALS.POS.MAX * 0.56,  type: GLOBALS.NPC.TYPE.BOSS,
-                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, // 悪
+                pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, 0) }, // 悪（ボス）
             { gpos: GLOBALS.POS.MAX * 0.44,  type: GLOBALS.NPC.TYPE.DEVIL,
                 pos: new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT / 2) }, // 魔
             { gpos: GLOBALS.POS.MAX * 0.40,  type: GLOBALS.NPC.TYPE.DISASTER,
@@ -113,17 +113,17 @@ export class Spawn {
             { gpos: GLOBALS.POS.MAX * 0.78, area: 4000, interval: 370,
                 type: GLOBALS.NPC.TYPE.CUSTOMER }, //「客」・出現開始
             { gpos: GLOBALS.POS.MAX * 0.70, area: 1450, interval: 60,
-                type: GLOBALS.NPC.TYPE.ENEMY }, // ボス前の敵
+                type: GLOBALS.NPC.TYPE.ENEMY },
             { gpos: GLOBALS.POS.MAX * 0.69, area: 1650, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
             { gpos: GLOBALS.POS.MAX * 0.51, area: 1150, interval: 45,
                 type: GLOBALS.NPC.TYPE.ENEMY }, // ボス後の敵
             { gpos: GLOBALS.POS.MAX * 0.49, area: 1150, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
-             { gpos: GLOBALS.POS.MAX * 0.42, area: 160, interval: 20,
-                type: GLOBALS.NPC.TYPE.WALL }, //「壁」・群生
-            { gpos: GLOBALS.POS.MAX * 0.35, area: 560, interval: 30,
-                type: GLOBALS.NPC.TYPE.ENEMY },
+             { gpos: GLOBALS.POS.MAX * 0.48, area: 120, interval: 30,
+                type: GLOBALS.NPC.TYPE.WALL }, //ボス後 -「壁」
+            { gpos: GLOBALS.POS.MAX * 0.40, area: 560, interval: 40,
+                type: GLOBALS.NPC.TYPE.ENEMY }, //「壁」後の -「敵」
             { gpos: GLOBALS.POS.MAX * 0.34, area: 560, interval: 150,
                 type: GLOBALS.NPC.TYPE.FRIEND },
             { gpos: GLOBALS.POS.MAX * 0.33, area: 560, interval: 300,

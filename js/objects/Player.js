@@ -41,6 +41,7 @@ export class Player {
         this.trace_buffer = new TraceBuffer(pos);
         this.alive = true;
         this.sprite = this.scene.add.sprite(pos.x, pos.y, 'p').setDepth(0);
+        MyDraw.set_glow(this.scene, this.sprite, 0xffffee);
     }
 
     add_option(type, pos, op_num){
@@ -122,7 +123,7 @@ export class Player {
                         blt.set_op(1);
                         player_bullets.push(blt);
                         this.add_energy(-0.5);
-                        this.scene.sound.play('se_shot_love');
+                        GameState.sound.se_shot_love.play();
                     }
                 } else {
                     let num = 0;
@@ -137,7 +138,7 @@ export class Player {
                         blt.set_op(1);
                         player_bullets.push(blt);
                         this.add_energy(-0.5);
-                        this.scene.sound.play('se_shot_attack');
+                        GameState.sound.se_shot_attack.play();
                     }
                     // オプションからの発射
                     this.options.forEach((option, i) => {
