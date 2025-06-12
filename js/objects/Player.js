@@ -113,7 +113,7 @@ export class Player {
                 if (this.bullet_type === GLOBALS.BULLET.TYPE.PLAYER_L){
                     let num = 0;
                     for (const bullet of player_bullets){
-                        if (bullet.op === 1){ num += 1;}
+                        if (bullet.op === 1 && bullet.type === GLOBALS.BULLET.TYPE.PLAYER_L){ num += 1;}
                     }
                     if (num < this.max_shot){
                         const blt = new Bullet(this.scene);
@@ -128,7 +128,7 @@ export class Player {
                 } else {
                     let num = 0;
                     for (const bullet of player_bullets){
-                        if (bullet.op === 1){ num += 1;}
+                        if (bullet.op === 1 && bullet.type === GLOBALS.BULLET.TYPE.PLAYER_A){ num += 1;}
                     }
                     if (num < this.max_shot){
                         const blt = new Bullet(this.scene);

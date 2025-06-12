@@ -17,7 +17,7 @@ export class MyDraw {
             if (depth2){
                 sprite.setDepth(depth2);
             } else {
-                sprite.setDepth(Math.max(-900,-depth));
+                sprite.setDepth(Math.max(-900,Math.min(900,-depth / 2)));
             }
         } else {
             sprite.visible = false;
@@ -32,7 +32,7 @@ export class MyDraw {
             sprite.visible = true;
             sprite.setPosition(screenPosition.x, screenPosition.y);
             sprite.setScale(size * ratio);
-            sprite.setDepth(Math.max(-900,-depth));
+            sprite.setDepth(Math.max(-900,Math.min(900,-depth /2)));
         } else {
             sprite.visible = false;
         }

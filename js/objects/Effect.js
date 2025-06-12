@@ -66,7 +66,7 @@ export class Effect {
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'etime')
                 .setAlpha(this.alpha);
             const x = GLOBALS.G_WIDTH * Math.random();
-            const y = 0;
+            const y = -200;
             const z = 200 * Math.random() - 100;
             this.size = 20;
             this.pos3 = new Phaser.Math.Vector3(x,y,z);
