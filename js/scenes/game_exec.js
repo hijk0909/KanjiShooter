@@ -270,7 +270,8 @@ export class Exec {
                     GameState.effects.push(eff);
 
                     GameState.sound.se_earn.play();
-                // 「強」の取得
+                    GameState.sound.se_birth.play();
+                    // 「強」の取得
                 } else if (item.type == GLOBALS.ITEM.TYPE.FORCE){
                     GameState.player.add_energy(100);
                     item.destroy();

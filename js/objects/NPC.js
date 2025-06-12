@@ -103,9 +103,12 @@ export class NPC {
             this.shot_cooldown -= 1 * GameState.ff;
             if (this.shot_cooldown <= 0){
                 this.shot_cooldown = 120;
-                const blt = new Bullet(this.scene);
-                blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
-                GameState.npc_bullets.push(blt);
+                // 画面下端でなければ敵弾発射
+                if (this.pos.y < GLOBALS.G_HEIGHT * 0.8){
+                    const blt = new Bullet(this.scene);
+                    blt.setType(GLOBALS.BULLET.TYPE.ENEMY, this.pos);
+                    GameState.npc_bullets.push(blt);
+                }
             }
         // 友
         } else if ( this.type === GLOBALS.NPC.TYPE.FRIEND){
@@ -305,7 +308,7 @@ export class NPC {
         if (this.pos.y > GLOBALS.G_HEIGHT / 5){
             if (this.type == GLOBALS.NPC.TYPE.BOSS ||
                 this.type == GLOBALS.NPC.TYPE.FRIEND){
-                this.pos.y -= 10 * GameState.ff;
+                this.pos.y -= 8; // * GameState.ff;
             }
         }
         if (this.type == GLOBALS.NPC.TYPE.BOSS){

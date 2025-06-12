@@ -62,12 +62,12 @@ export class Effect {
                 .setAlpha(this.alpha);
             }
         } else if (this.type == GLOBALS.EFFECT.TYPE.TIME) {
-            this.alpha = 0.6;
+            this.alpha = 0.3;
             this.sprite = this.scene.add.sprite(pos.x, pos.y, 'etime')
                 .setAlpha(this.alpha);
             const x = GLOBALS.G_WIDTH * Math.random();
             const y = 0;
-            const z = 600 * Math.random() - 300;
+            const z = 200 * Math.random() - 100;
             this.size = 20;
             this.pos3 = new Phaser.Math.Vector3(x,y,z);
             // console.log("pos :", this.pos3);
@@ -112,7 +112,7 @@ export class Effect {
                 }
             this.update_blessing(this.target_obj.pos);
         } else if (this.type == GLOBALS.EFFECT.TYPE.TIME){
-            this.pos3.y += 6 * GameState.ff;
+            this.pos3.y += this.speed * GameState.ff;
             MyDraw.updateSprite3(this.sprite, this.pos3, this.size / ORIGINAL_SIZE);
             if (this.pos3.y > GLOBALS.G_HEIGHT){
                 this.alive = false;
@@ -122,6 +122,10 @@ export class Effect {
 
     set_target_obj(obj){
         this.target_obj = obj;
+    }
+
+    set_speed(speed){
+        this.speed = speed;
     }
 
     update_blessing(p){

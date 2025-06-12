@@ -2,6 +2,9 @@
 import { GameState } from '../GameState.js';
 import { GLOBALS } from '../GameConst.js';
 import { MyDraw } from '../utils/DrawUtils.js';
+import { Effect } from '../objects/Effect.js';
+
+const TIME_PERIOD = 30;
 
 export class BG {
     constructor(scene){
@@ -11,6 +14,7 @@ export class BG {
         this.borders = [];
         this.last_pos = GLOBALS.POS.MAX;
         this.bg_color = GLOBALS.COLOR.BG;
+        this.counter = 0;
 
         this.scrollEvents = [
             { pos: GLOBALS.POS.GOAL + GLOBALS.POS.UNIT * 10, spriteKey: 'y0'  },
@@ -46,6 +50,16 @@ export class BG {
                 }
             }
             this.last_pos = pos;
+        }
+
+        // 時エフェクトの追加
+        this.counter += 1 * GameState.ff;
+        if ( this.counter > TIME_PERIOD){
+            this.counter = 0;
+            const eff = new Effect(this.scene);
+            eff.setType(GLOBALS.EFFECT.TYPE.TIME, GameState.player.pos);
+            eff.set_speed(2.2);
+            GameState.effects.push(eff);
         }
 
         // 更新

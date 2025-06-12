@@ -109,7 +109,7 @@ export class Player {
                 this.bullet_type = GLOBALS.BULLET.TYPE.PLAYER_L;
             }
             // console.log("bullet_type", this.bullet_type, this.cooldown);
-            if (this.cooldown === 0){
+            if (this.cooldown <= 0){
                 if (this.bullet_type === GLOBALS.BULLET.TYPE.PLAYER_L){
                     let num = 0;
                     for (const bullet of player_bullets){

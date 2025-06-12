@@ -93,6 +93,8 @@ export class AssetLoader extends Phaser.Scene {
         this.load.image('op_key', 'assets/images/op_key.png');
         this.load.image('op_gamepad', 'assets/images/op_gamepad.png');
         this.load.image('op_touch', 'assets/images/op_touch.png');
+        this.load.spritesheet('op_touch_anim', 'assets/images/op_touch_anim.png', {
+            frameWidth: 200,  frameHeight: 120, endFrame : 3 });
         // アイコン
         this.load.image('icon_finger', 'assets/images/icon_finger.png');
 
@@ -106,6 +108,7 @@ export class AssetLoader extends Phaser.Scene {
         this.load.audio('se_loss', './assets/audio/se/se_loss.mp3');
         this.load.audio('se_hit', './assets/audio/se/se_hit.mp3');
         this.load.audio('se_bell', './assets/audio/se/se_bell.mp3');
+        this.load.audio('se_birth', './assets/audio/se/se_birth.mp3');
         // ジングル
         this.load.audio('jingle_gameover', './assets/audio/se/jingle_gameover.mp3');
         // BGM
@@ -124,6 +127,7 @@ export class AssetLoader extends Phaser.Scene {
             se_loss         : this.sound.add('se_loss', { volume: 1.0 }),
             se_hit          : this.sound.add('se_hit', { volume: 1.0 }),
             se_bell         : this.sound.add('se_bell', { volume: 1.0 }),
+            se_birth        : this.sound.add('se_birth', { volume: 1.0 }),
             jingle_gameover : this.sound.add('jingle_gameover', { volume: 0.6 }),
             bgm_clear       : this.sound.add('bgm_clear', { volume: 0.8, loop: true}),
             bgm_main        : this.sound.add('bgm_main', { volume: 0.8, loop: true })

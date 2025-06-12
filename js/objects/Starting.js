@@ -54,9 +54,10 @@ export class Starting {
             GameState.camera.rotation.roll = GLOBALS.CAMERA.ROLL + ((this.max_count - this.count) / this.max_count) * 10;
 
             // 時エフェクトの追加
-            if ( this.count < 150){
+            if ( this.count < 200){
                 const eff = new Effect(this.scene);
                 eff.setType(GLOBALS.EFFECT.TYPE.TIME, GameState.player.pos);
+                eff.set_speed(6);
                 GameState.effects.push(eff);
             }
 

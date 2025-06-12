@@ -11,11 +11,13 @@ export class TitleScene extends Phaser.Scene {
     }
 
     create() {
+        // this.sound.pauseOnBlur = false; //play時の警告を出さない
+
         const cx = this.game.canvas.width / 2;
         const cy = this.game.canvas.height / 2;
         this.add.text(cx, 50, 'KANJI Shooter', { fontSize: '64px', fill: '#ffee00' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 215, 'Copyright ©2025 Current Color Co. Ltd. All rights reserved.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
-        this.add.text(cx, cy + 240, 'Version 1.3 2025.6.6.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
+        this.add.text(cx, cy + 240, 'Version 1.4 2025.6.12.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
         this.keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -35,7 +37,22 @@ export class TitleScene extends Phaser.Scene {
         const opy=100;
         this.add.image(150,opy,'op_key').setOrigin(0.5,0);
         this.add.image(400,opy,'op_gamepad').setOrigin(0.5,0);
-        this.add.image(650,opy,'op_touch').setOrigin(0.5,0);
+        // this.add.image(650,opy,'op_touch').setOrigin(0.5,0);
+        this.sprite = this.add.sprite(650, opy, 'op_touch_anim').setOrigin(0.5,0);
+        if (!this.anims.exists('op_touch_anims')) {
+            this.anims.create({key:'op_touch_anims',
+                repeat : -1,
+                duration : 1,
+                defaultTextureKey: 'op_touch_anim',
+                frames: [
+                    { frame: 0, duration : 1500 },
+                    { frame: 1, duration : 120 },
+                    { frame: 2, duration : 1500 },
+                    { frame: 3, duration : 120 }
+                ]                
+            });
+        }
+        this.sprite.play('op_touch_anims');
 
         GameState.reset();
     }

@@ -62,6 +62,7 @@ export class GameScene extends Phaser.Scene {
         this.starting = new Starting(this);
         this.starting.setup();
         GameState.sound.bgm_main.play();
+        GameState.sound.se_birth.play();
 
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
