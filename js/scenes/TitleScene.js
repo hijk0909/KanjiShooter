@@ -69,6 +69,9 @@ export class TitleScene extends Phaser.Scene {
 
     start_game(){
 
+            // サウンドのアンロック
+            this.sound.unlock();
+
             // 念のため、他のシーンを止める
             this.scene.stop('MainScene');
             this.scene.stop('GameOverScene');
