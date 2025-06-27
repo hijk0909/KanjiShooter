@@ -44,14 +44,14 @@
             const { GameOverScene } = await import('./js/scenes/GameOverScene.js');
             const { GameClearScene } = await import('./js/scenes/GameClearScene.js');
 
-            const isMobilePortrait = () => {
-                return window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+            const isPortrait = () => {
+                return window.innerHeight > window.innerWidth;
             };
 
-            const EXTRA_PAD_HEIGHT = 300;
             const GAME_WIDTH = 800;
-            const GAME_HEIGHT_BASE = 600;
-            const GAME_HEIGHT = isMobilePortrait() ? GAME_HEIGHT_BASE + EXTRA_PAD_HEIGHT : GAME_HEIGHT_BASE;
+            const GAME_HEIGHT_LANDSCAPE = 600;
+            const GAME_HEIGHT_PORTRAIT = 1366;
+            const GAME_HEIGHT = isPortrait() ? GAME_HEIGHT_PORTRAIT : GAME_HEIGHT_LANDSCAPE;
             const config = {
                 type: Phaser.AUTO,
                 scale: {

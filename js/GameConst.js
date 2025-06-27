@@ -4,6 +4,7 @@ export const GLOBALS = {
     G_HEIGHT : 800,
     G_WINDOW_WIDTH : 800,
     G_WINDOW_HEIGHT : 600,
+    G_WINDOW_HEIGHT_P : 1066,
     G_FPS : 60,
 
     COLOR: {
@@ -27,6 +28,15 @@ export const GLOBALS = {
         Y: 800,
         Z: -450,
         UPDOWN: -32,
+        RIGHTLEFT: 0,
+        ROLL: 0
+    },
+
+    CAMERA_P: {
+        X: 600 /2,
+        Y: 230,
+        Z: -380,
+        UPDOWN: 0,
         RIGHTLEFT: 0,
         ROLL: 0
     },

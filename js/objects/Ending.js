@@ -97,10 +97,17 @@ export class Ending {
             const zdist = ratio1 * ratio1 * 500;
             const ydiff = GLOBALS.G_HEIGHT / 2 - GLOBALS.CAMERA.Y;
             const y = GLOBALS.CAMERA.Y + ydiff * ratio1 * ratio1;
-            GameState.camera = {
-                    position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, y, GLOBALS.CAMERA.Z - zdist),
-                    rotation: { upDown: upDown, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
-            };
+            if (GameState.isPortrait){
+                GameState.camera = {
+                        position: new Phaser.Math.Vector3(GLOBALS.CAMERA_P.X, GLOBALS.CAMERA_P.Y, GLOBALS.CAMERA_P.Z - zdist),
+                        rotation: { upDown: GLOBALS.CAMERA_P.UPDOWN, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA_P.ROLL }
+                };
+            } else {
+                GameState.camera = {
+                        position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, y, GLOBALS.CAMERA.Z - zdist),
+                        rotation: { upDown: upDown, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
+                };
+            }
         }
 
         // ワイプアウトの設定
@@ -148,7 +155,8 @@ export class Ending {
 
     setup_wipeout(){
         // ワイプ・アウト
-        this.overlay = this.scene.add.rectangle(0, 0, GLOBALS.G_WINDOW_WIDTH, GLOBALS.G_WINDOW_HEIGHT, 0x000000, 1)
+        const wh = GameState.isPortrait ? GLOBALS.G_WINDOW_HEIGHT_P : GLOBALS.G_WINDOW_HEIGHT;
+        this.overlay = this.scene.add.rectangle(0, 0, GLOBALS.G_WINDOW_WIDTH, wh, 0x000000, 1)
             .setOrigin(0)
             .setDepth(900)
             .setAlpha(0);
@@ -166,7 +174,7 @@ export class Ending {
                 maskGraphics.clear();
                 maskGraphics.fillStyle(0xffffff);
                 maskGraphics.beginPath();
-                maskGraphics.arc(GLOBALS.G_WINDOW_WIDTH / 2, GLOBALS.G_WINDOW_HEIGHT / 2, maskData.radius, 0, Math.PI * 2);
+                maskGraphics.arc(GLOBALS.G_WINDOW_WIDTH / 2, wh / 2, maskData.radius, 0, Math.PI * 2);
                 maskGraphics.fillPath();
             }
         });

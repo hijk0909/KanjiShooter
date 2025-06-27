@@ -13,11 +13,15 @@ export class TitleScene extends Phaser.Scene {
     create() {
         // this.sound.pauseOnBlur = false; //play時の警告を出さない
 
+        if (this.game.canvas.width < this.game.canvas.height){
+            GameState.isPortrait = true;
+        }
+
         const cx = this.game.canvas.width / 2;
         const cy = this.game.canvas.height / 2;
         this.add.text(cx, 50, 'KANJI Shooter', { fontSize: '64px', fill: '#ffee00' , stroke: COLOR.RED, strokeThickness: 2}).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 215, 'Copyright ©2025 Current Color Co. Ltd. All rights reserved.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
-        this.add.text(cx, cy + 240, 'Version 1.4 2025.6.12.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
+        this.add.text(cx, cy + 240, 'Version 1.5 2025.6.28.', { fontSize: '18px', fill: '#888' }).setOrigin(0.5,0.5);
         this.add.text(cx, cy + 120, 'PUSH SPACE KEY',{ fontSize: '24px', fill: '#fff' }).setOrigin(0.5,0.5);
 
         this.keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);

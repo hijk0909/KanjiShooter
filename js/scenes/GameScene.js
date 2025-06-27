@@ -54,10 +54,7 @@ export class GameScene extends Phaser.Scene {
         GameState.effects = [];
 
         GameState.player.setPos(new Phaser.Math.Vector2(GLOBALS.G_WIDTH / 2, GLOBALS.G_HEIGHT - 100));
-        GameState.camera = {
-            position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, GLOBALS.CAMERA.Y, GLOBALS.CAMERA.Z),
-            rotation: { upDown: GLOBALS.CAMERA.UPDOWN, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
-        };
+        GameState.reset_camera();
 
         this.starting = new Starting(this);
         this.starting.setup();
@@ -141,19 +138,19 @@ export class GameScene extends Phaser.Scene {
     } // End of update()
 
     drawPadArea(){
-        if (this.scale.height > 600) {
-            const hiddenPadHeight = this.scale.height - 600;
+        if (GameState.isPortrait) {
+            const hiddenPadHeight = this.scale.height - GLOBALS.G_WINDOW_HEIGHT_P;
 
             this.add.rectangle(
                 this.scale.width / 2,
-                600 + hiddenPadHeight / 2,
+                GLOBALS.G_WINDOW_HEIGHT_P + hiddenPadHeight / 2,
                 this.scale.width,
                 hiddenPadHeight,
                 0x303030
             ).setDepth(997);
 
 
-            this.add.image(this.scale.width/2,600+hiddenPadHeight/2,'icon_finger')
+            this.add.image(this.scale.width/2,GLOBALS.G_WINDOW_HEIGHT_P + hiddenPadHeight/2,'icon_finger')
             .setDepth(998)
             .setOrigin(0.5,0.5)
             .setScale(0.2);

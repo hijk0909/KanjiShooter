@@ -4,6 +4,7 @@ import { GLOBALS } from './GameConst.js';
 export const  GameState = {
     // グローバル変数
     ff : 1.0,
+    isPortrait : false,
     pos : GLOBALS.POS.MAX,
     married : false,
     ending : null,
@@ -39,5 +40,19 @@ export const  GameState = {
         this.e_encourage = 0;
         this.e_money = 0;
         this.e_virtue = 0;
+    },
+
+    reset_camera(){
+        if (this.isPortrait){
+            this.camera = {
+                position: new Phaser.Math.Vector3(GLOBALS.CAMERA_P.X, GLOBALS.CAMERA_P.Y, GLOBALS.CAMERA_P.Z),
+                rotation: { upDown: GLOBALS.CAMERA_P.UPDOWN, rightLeft: GLOBALS.CAMERA_P.RIGHTLEFT, roll: GLOBALS.CAMERA_P.ROLL }
+            };
+        } else {
+            GameState.camera = {
+                position: new Phaser.Math.Vector3(GLOBALS.CAMERA.X, GLOBALS.CAMERA.Y, GLOBALS.CAMERA.Z),
+                rotation: { upDown: GLOBALS.CAMERA.UPDOWN, rightLeft: GLOBALS.CAMERA.RIGHTLEFT, roll: GLOBALS.CAMERA.ROLL }
+            };
+        }
     }
 };

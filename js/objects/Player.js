@@ -223,13 +223,14 @@ class Marker {
 
         const p = new Phaser.Math.Vector3(pos.x,pos.y,0);
         const res = MyMath.projectPoint(p, GameState.camera);
-        const { screenPosition : sp } = res;
-        const alpha = (this.max_counter - this.counter) / this.max_counter;
-        const radius = this.counter;
+        if (res != null){
+            const { screenPosition : sp } = res;
+            const alpha = (this.max_counter - this.counter) / this.max_counter;
+            const radius = this.counter;
 
-        this.graphics.lineStyle(4, 0xffff88, alpha);
-        this.graphics.strokeCircle(sp.x, sp.y, radius);
-
+            this.graphics.lineStyle(4, 0xffff88, alpha);
+            this.graphics.strokeCircle(sp.x, sp.y, radius);
+        }
     }
 }
 
